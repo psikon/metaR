@@ -15,8 +15,7 @@
   \item{score}{Score of the detection with MetaCV}
   \item{geneID}{ID for NCBI database} \item{taxID}{ID for
   NCBI Taxonomy database} \item{taxname}{Name in NCBI
-  Taxonomy database} \item{count}{Number of reads mapped to
-  this taxID}
+  Taxonomy database}
 
   }
 }

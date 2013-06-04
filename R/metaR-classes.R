@@ -10,7 +10,6 @@
 #'   \item{geneID}{ID for NCBI database}
 #'   \item{taxID}{ID for NCBI Taxonomy database}
 #'   \item{taxname}{Name in NCBI Taxonomy database}
-#'   \item{count}{Number of reads mapped to this taxID}
 #'   
 #' }
 #' 
@@ -19,25 +18,13 @@
 #' @rdname metaCVReport-class
 #' @exportClass metaCVReport
 #' @aliases show,metaCVReport-method
-setClass("metaCVReport",
-         representation(read_name="character",
-                        score="integer",
-                        geneID="integer",
-                        taxID="integer",
-                        taxname="character",
-                        count="integer"),
-         prototype(read_name=NA_character_,
-                   score=NA_integer_,
-                   geneID=NA_integer_,
-                   taxID=NA_integer_,
-                   taxname=NA_character_,
-                   count=NA_integer_)
-         )
+setOldClass('data.frame')
+setClass("metaCVReport", contains="data.frame")
 
 #specialized show Method for metaCVReport object
 setMethod("show","metaCVReport",
           function(object){
-            n <- length(object@read_name)
+            n <- nrow(object)
             showme <- sprintf('%s object with %s query rows',
                               sQuote(class(object)), n)
             cat(showme, sep="\n")
