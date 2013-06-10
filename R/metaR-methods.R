@@ -59,7 +59,7 @@ setMethod("taxonCount", "metaCVReport",
 #' @rdname MetaCVReport-methods
 #' @export
 researchTaxIds <- function(metaCVReport,path_to_DB) {
-  print("Hier werden geneIDs neue taxIDs zugeordnet")
+
 }
 
 # researchTaxIDs============================
@@ -72,7 +72,7 @@ researchTaxIds <- function(metaCVReport,path_to_DB) {
 #' @rdname MetaCVReport-methods
 #' @export
 assignLinage <- function(geneID) {
-  print("ordnet der geneID die passende Linage zu")
+  
 }
 
 # mergeMetaCVwithBlast============================
@@ -87,6 +87,12 @@ assignLinage <- function(geneID) {
 #' @export
 mergeMetaCVwithBlast <- function(metaCVReport,blastReportDB) {
   print("vergleicht die GeneIDs von MetaCV mit den Ergebnissen von Blast")
+  
+  
+  # vergleiche die gene ids und die tax ids zwischen den beiden datensätzen 
+  # füge eine extra spalte ein welches programm dieses fund gemacht hat
+  # blastn - metacv - beide
+  
 }
 
 # extractEukaryoticDB============================
