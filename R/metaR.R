@@ -8,9 +8,9 @@ library(plyr)
 
 
 # important variables
-db <- "/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/program/db/"
-db.path <- "/home/psehnert/daten/SPICEIII/miseq/sample64/blastn/sample64.db"
-res.path <- "/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/result/metacv/metpipe.res"
+#db <- "/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/program/db/"
+#db.path <- "/home/psehnert/daten/SPICEIII/miseq/sample64/blastn/sample64.db"
+res.path <- "/home/psehnert/daten/SPICEIII/miseq/sample64/metacv/metpipe.res"
 
 #### get MetaCV results ####
 
@@ -61,40 +61,4 @@ hsp_test$midline <- NULL
 hsp_test$hseq<- NULL
 hsp_test$positive <- NULL
 hsp_test$hsp_id <- NULL
-
-selectHSP <- function(con,query_id) {
-  library(IRanges)
-  # create subset
-  tmp <- db_query(con,paste0("select * 
-                             from hsp 
-                             WHERE query_id IN (",query_id,")"))
-  hitIDs <- tmp$hit_id
-
-  for(i in 1:length(hitIDs)) {
-    #  case 1: only one hsp - keep it
-    if(nrow(tmp[ tmp$hit_id == hitIDs[i],]) == 1 ) {
-      print("only one hsp per hit --> keep it")
-      tmp <- subset(tmp,tmp$hit_id != hitIDs[i])
-      hitIDs <- tmp$hit_id
-    } else {
-      
-      # case 2: non overlapping hsps
-      if query start && query end +10% 
-      
-    }
-  }
-    
-      
-      else {
-    
-    
-  }}
-  
-  
-  # case 1: only one hsp - keep it
-  if (nrow(subset(hsp_test,query_id==12))==1) {
-    print("alone")
-  }
-  if ()
-}
 
