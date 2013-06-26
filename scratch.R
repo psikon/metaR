@@ -40,15 +40,22 @@ getSelected <- function (x, qid,hid) {
   })))
 }
 
-getSelectedRange(con,chsp)
+# reduce the hsp to one if necessary
+chsp_range <- getSelectedRange(con,chsp)
+
 getSelectedRange <- function(x,df) {
   stmts <- paste("SELECT hit_id, query_from, query_to, hit_from, hit_to FROM 
-                 hsp WHERE query_id=",df$query_id,"AND hit_id=",df$hit_id)
-  lapply(stmts, FUN=function(stmt) {
-    db_query(x, stmt) %||% NA_character_
+                 hsp WHERE query_id=",unique(df$query_id),"AND hit_id=",unique(df$hit_id))
+ lapply(stmts, FUN=function(stmt) {
+    pos <- db_query(x, stmt) %||% NA_character_
+    IRanges(start=pos$query_from,end=pos$query_to,names=pos$hit_id)
   })
 }
-         
+
+#TODO:
+# vereinige die selektierten HSp zu einem und ranke sie dann. anschkließend noch mal 
+# selektion mit 98% des Total Scores und dann begin der Zuordnung der TaxIds
+
 getQueryRange(x,id)
 reduce(chsp)
 # rank the hsps for bitscore
