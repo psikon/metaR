@@ -7,4 +7,22 @@ Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-
+Depends:
+    R (>= 2.15)
+Imports:
+    assertthat,
+    blastr,
+    IRanges,
+    iterators,
+    ncbi,
+    plyr,
+    rmisc,
+    RSQLite
+Collate:
+    'accessor-utils.R'
+    'assignTaxon.R'
+    'db-functions.R'
+    'lca.R'
+    'metaR-classes.R'
+    'metaR-getters.R'
+    'metaR-methods.R'

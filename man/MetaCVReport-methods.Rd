@@ -48,7 +48,7 @@
 
   \item{x}{A \code{\linkS4class{metaCVReport}] object.}
 
-  \item{i}{index of the Object}
+  \item{i}{taxID(s) for searching}
 
   \item{x}{A \code{\linkS4class{metaCVReport}] object.}
 
@@ -91,7 +91,7 @@
 
   Getter methods for MetaCVReport
 
-  Getter methods for MetaCVReport
+  get for a specifig taxID all geneID(s)
 
   get only the entries with a score greater than x, to
   prevent wrongly classified entries
@@ -125,8 +125,9 @@
   100. In our analysis, reads with very low scores are
   highly possible to be wrongly classified and should be
   filtered. Recommended is a set of cutoff values (minimal
-  scores to pass) according to different read lengths: Read
-  length Minimal score 100 bp 20 200 bp 10 400 bp 5 600 bp
-  4 800 bp 3 1000 bp 3
+  scores to pass) according to different read lengths:
+  \describe{ \item{Read length}{Minimal score} \item{100 bp
+  }{20} \item{200 bp}{10} \item{400 bp}{5} \item{600 bp}{4}
+  \item{800 bp}{3} \item{1000 bp}{3} }
 }
 

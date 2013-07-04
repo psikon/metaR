@@ -1,13 +1,7 @@
-#' @importFrom rmisc db_query
 #' @importFrom IRanges IRanges
 #' @importFrom plyr arrange
+#' @importFrom plyr desc
 #' @importFrom ncbi getRank
-#' @importFrom ncbi getParentTaxId
-#' @importFrom ncbi taxonDB
-#' @importFrom ncbi getByRank
-#' @importFrom ncbi taxonByGeneID
-#' @importFrom ncbi Taxon
-#' @importFrom ncbi TaxonList
 NULL
 
 setGeneric("has_ranks", function (x, ranks, ...) standardGeneric("has_ranks"))
@@ -18,7 +12,8 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
   vapply(x, has_ranks, ranks=ranks, FUN.VALUE=logical(1), USE.NAMES=FALSE)
 })
 
-.validRanks <- .targetRanks[-c(1,length(.targetRanks))] 
+#.validRanks <- .targetRanks[-c(1,length(.targetRanks))] 
+
 compactRanks <- function (x) {
   x[has_ranks(x, .validRanks)]
 }
@@ -82,15 +77,6 @@ setMethod('.resolveNoRank', 'TaxonList',
           })
 
 
-
-
-.resolveSubSpecies <- function(taxon,taxonDB) {
-  if(getRank(taxa) == "sub species") {
-    taxon <- taxonDB(getParentTaxId(taxon),taxonDB)
-  }
-  taxon
-}
-
 setAs("Taxon", "data.frame", function (from) {
   data.frame(tax_id = from@TaxId, scientific_name = from@ScientificName, rank = from@Rank,
              check.names=FALSE, stringsAsFactors=FALSE)
@@ -99,70 +85,4 @@ setAs("Taxon", "data.frame", function (from) {
 setAs("TaxonList", "data.frame", function (from) {
   do.call('rbind', lapply(from, as, Class='data.frame'))
 })
-
-LCA <- function(query_table,
-                taxon_db,
-                taxRanks = c("species", "genus", "tribe", "family", "order",
-                             "class", "phylum", "kingdom", "superkingdom"))
-{
-  # check the data frame for required fields
-  assert_that(query_table %has_name% 'query_id',
-              query_table %has_name% 'hit_id',
-              query_table %has_name% 'gene_id',
-              query_table %has_name% 'accession')
-  # check the ranks for valid ncbi rank designations
-  if (!all(taxRanks %in% ncbi:::.ranks)) {
-    stop("'taxRanks' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
-  }
-  
-  taxRanks <- names(rev(sort(sapply(taxRanks, match, ncbi:::.ranks))))
-  topRank <- taxRanks[length(taxRanks)]
-  taxa <- taxonByGeneID(query_table[["gene_id"]], taxon_db)
-  
-  if (nunique(getByRank(taxa, topRank, 'TaxId')) > 1) {
-    return(NULL)
-  }
-  
-  rankIt <- iter(taxRanks)
-  taxids <- getByRank(taxa, nextElem(rankIt), 'TaxId')
-  while (all(is.na(taxids))) 
-    taxids <- getByRank(taxa, nextElem(rankIt), 'TaxId')
-  taxa <- taxonDB(taxids, taxon_db)
-
-  if (length(taxa) == 1) {
-    cbind(query_table[, c('query_id', 'hit_id', 'gene_id', 'accession')],
-          as(taxa, 'data.frame'))
-  } else {
-    valid <- which(has_ranks(taxa, taxRanks))
-    query_table <- query_table[valid, ]
-    taxa <- taxa[valid]
-    lineage <- getLineage(taxa)
-    taxids <- unique(getTaxId(taxa))
-    while (length(taxids) > 1 || all(is.na(taxids))) {
-      taxids <- unique(getByRank(lineage, nextElem(rankIt), 'TaxId'))
-    }  
-    cbind(query_table[, c('query_id', 'hit_id', 'gene_id', 'accession')],
-          as(taxonDB(unique(taxids), taxon_db), 'data.frame')) 
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
