@@ -5,7 +5,7 @@
 #'@importFrom rmisc db_query
 NULL
 
-taxonomy.sql <- 'CREATE TABLE taxonomy(
+taxonomy_create.sql <- 'CREATE TABLE taxonomy(
                         query_id        INTEGER,
                         hit_id          INTEGER,
                         gene_id         TEXT,
@@ -13,6 +13,7 @@ taxonomy.sql <- 'CREATE TABLE taxonomy(
                         tax_id          INTEGER,
                         scientific_name	TEXT,
                         rank            TEXT,
+                        superkingdom    TEXT,
                         PRIMARY KEY (query_id),
                         FOREIGN KEY (query_id) REFERENCES query (query_id),
                         FOREIGN KEY (hit_id) REFERENCES query (hit_id)
@@ -23,10 +24,20 @@ taxonomy.sql <- 'CREATE TABLE taxonomy(
                 CREATE INDEX Ftaxaonomy_tax_hit_query ON hsp (query_id, hit_id, tax_id);
                 '
 
+taxonomy_drop.sql <- 'DROP TABLE taxonomy;'
 #'
 #'@export
 connectTaxonDB <- function(path_to_db) {
   list(taxon_db=taxonDBConnect(path_to_db),geneid_db=geneidDBConnect(path_to_db))
 }
 
-db_query(blastCon,taxonomy.sql)
+createTaxonomyTable <- function(blastDB) {
+  if (blastDB %has_tables% 'taxonomy') {
+    db_query(blastDB,taxonomy_drop.sql)
+  }
+  db_query(blastDB,taxonomy_create.sql)
+}
+
+updateTaxonomyTable <- function(blastDB,df) {
+  db_bulk_insert()
+}
