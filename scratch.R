@@ -8,8 +8,9 @@ taxCon <- connectTaxonDB("/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/pr
 # extract tables for overview
 hit <- db_query(blastCon, "SELECT * from hit")
 hsp <- db_query(blastCon, "SELECT * from hsp")
+taxonomy <- db_query(blastCon, "SELECT * from taxonomy")
 
-db_df <- assignTaxon(hit$query_id, 
+db_df <- assignTaxon(1:1000, 
                      taxRanks = c("species", "genus", "tribe", "family", "order",
                                   "class", "phylum", "kingdom", "superkingdom"),
                      blast_db = blastCon, 
@@ -17,9 +18,7 @@ db_df <- assignTaxon(hit$query_id,
 
 ## Funktionen schreiben 
 # db_bulk_insert mit reset_at
-# superkingdom zuordnen
 # doku
 # 
-
-
-
+createTaxonomyTable(blastDB=blastCon)
+updateTaxonomyTable(blastCon,db_df)

@@ -63,3 +63,4 @@ assignTaxon <- function (query_id,
     NULL
   }
 }
+

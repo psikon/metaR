@@ -4,6 +4,15 @@
 #' @importFrom ncbi getRank
 NULL
 
+#' check ranks of taxon(s) against reference
+#' 
+#' @param x taxon object
+#' @param ranks character vector of taxonomical ranks
+#' 
+#' @return \code{TRUE/FALSE}
+#' 
+#' @rdname accessor-utils
+#' @export
 setGeneric("has_ranks", function (x, ranks, ...) standardGeneric("has_ranks"))
 setMethod("has_ranks", "Taxon", function (x, ranks) {
   any(getRank(getLineage(x)) %in% ranks)
@@ -12,34 +21,47 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
   vapply(x, has_ranks, ranks=ranks, FUN.VALUE=logical(1), USE.NAMES=FALSE)
 })
 
-#.validRanks <- .targetRanks[-c(1,length(.targetRanks))] 
 
-compactRanks <- function (x) {
-  x[has_ranks(x, .validRanks)]
-}
-
-
-#' select all hit(s) specified by a query_id from blastReportDB
+#' select complete hit(s) 
+#' 
+#' @description wrapper function to get complete hit(s) from hit table in 
+#' blast database
+#' 
+#'@param x \code{\link{blastReportDB}} object
+#'@param id query_id
 #'
+#'@return data.frame
+#'
+#'@rdname accessor-utils
+#'@export
 getHit <- function(x,id) {
   db_query(x,paste("SELECT * FROM hit where query_id=",id))
 }
 
-#' select all hsp(s) of hit(s) specified by a query_id from blastReportDB
+#' select complete hsp(s) 
 #' 
-#' @param x an \code{\link{BlastReportDB}} connection object
+#' @description wrapper function to get complete hsp(s) from hsp table in 
+#' blast database
+#' 
+#'@param x \code{\link{blastReportDB}} object
+#'@param id query_id
+#'
+#'@return data.frame
+#'
+#'@rdname accessor-utils
+#'@export
 getHsp <- function(x,id) {
   db_query(x,paste("SELECT * FROM hsp where query_id=",id))
 }
 
-
+# returns all hsp(s) matching a specific query_id and hit_id or NA
 .getSelectedHits <- function (x, qid, hid) {
   stmts <- paste("SELECT * from hsp WHERE query_id=",qid,"AND hit_id=",hid)
   as.data.frame(do.call(rbind,lapply(stmts, FUN=function(stmt) {
     db_query(x, stmt) %||% NA_character_ 
   })))
 }
-
+# returns all hsp(s) matching a specific query_id and hit_id or NA
 .getSelectedRange <- function(x,df) {
   stmts <- paste("SELECT hit_id, query_from, query_to, hit_from, hit_to FROM 
                  hsp WHERE query_id=",unique(df$query_id),"AND hit_id=",unique(df$hit_id))
@@ -86,3 +108,12 @@ setAs("TaxonList", "data.frame", function (from) {
   do.call('rbind', lapply(from, as, Class='data.frame'))
 })
 
+assignSuperKingdom <- function (tax_id) {
+  if (tax_id == 2759) {
+    return("Eukaryota")
+  } else if (tax_id == 2) {
+    return("Bacteria")
+  } else {
+    return("unclassified")
+  }
+}

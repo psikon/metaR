@@ -4,7 +4,7 @@
 #' from the .res outputfile of metaCV
 #' 
 #' metaCVReport objects have 5 slots:
-#' \describe{
+#' \itemize{
 #'   \item{read_name}{Name of the Read in Input File}
 #'   \item{score}{Score of the detection with MetaCV}
 #'   \item{geneID}{ID for NCBI database}

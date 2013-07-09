@@ -70,7 +70,8 @@ LCA <- function(query_table,
   if (length(taxa) == 1) {
     # if only one taxon find create the resulting data.frame
     cbind(query_table[, c('query_id', 'hit_id', 'gene_id', 'accession')],
-          as(taxa, 'data.frame'))
+          as(taxa, 'data.frame'),
+          superkingdom=assignSuperKingdom(getByRank(taxa,'superkingdom','TaxId')))
   } else {
     # check if the taxa have all valid ranks (defined ranks between starting rank
     # and toprank contained in the given rank object)
@@ -87,6 +88,7 @@ LCA <- function(query_table,
     }
     # create the resulting data.frame
     cbind(query_table[, c('query_id', 'hit_id', 'gene_id', 'accession')],
-          as(taxonDB(unique(taxids), taxon_db), 'data.frame')) 
+          as(taxonDB(unique(taxids), taxon_db), 'data.frame'),
+          superkingdom=assignSuperKingdom(unique(getByRank(lineage,'superkingdom','TaxId')))) 
   }
 }

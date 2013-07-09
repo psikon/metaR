@@ -10,7 +10,7 @@
   data retrieved from the .res outputfile of metaCV
 }
 \details{
-  metaCVReport objects have 5 slots: \describe{
+  metaCVReport objects have 5 slots: \itemize{
   \item{read_name}{Name of the Read in Input File}
   \item{score}{Score of the detection with MetaCV}
   \item{geneID}{ID for NCBI database} \item{taxID}{ID for

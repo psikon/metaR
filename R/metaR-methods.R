@@ -1,7 +1,9 @@
 # metaCVReport============================
 #
-#' Import the Results of the .res File from MetaCV to a R and creates an 
-#' \code{\linkS4class{metaCVReport}] object
+#'import a metaCV .res file
+#'
+#'@description Import the Results of the .res File from MetaCV to a R and creates an 
+#' metaCVReport object
 #' 
 #' @param path path to the resulting .res File from metaCV
 #' 
@@ -27,10 +29,12 @@ setMethod("metaCVReport", signature='character',
 
 # taxonCount============================
 #
-#' creates a df, that contains the counts ordered by taxIds and the 
+#'count taxons of MetaCV
+#'
+#'@description creates a df, that contains the counts ordered by taxIds and the 
 #' corresponding taxName
 #' 
-#' @param x A \code{\linkS4class{metaCVReport}] object.
+#' @param x A metaCVReport object.
 #' 
 #' @rdname MetaCVReport-methods
 #' @export
@@ -48,40 +52,15 @@ setMethod("taxonCount", "metaCVReport",
             cbind(tmp, count = unname(count))
           })
 
-# researchTaxIDs============================
-#
-#' find a better taxID for the GeneID of the object in the 
-#' NCBI taxonomy database
-#' 
-#' @param metaCVReport A \code{\linkS4class{metaCVReport}] object.
-#' @param path path to the taxonomy database
-#' 
-#' @rdname MetaCVReport-methods
-#' @export
-researchTaxIds <- function(metaCVReport,path_to_DB) {
-
-}
-
-# researchTaxIDs============================
-#
-#' find the linage in the NCBI taxonomy database basing on the 
-#' geneID
-#' 
-#' @param geneID ID for NCBI database
-#' 
-#' @rdname MetaCVReport-methods
-#' @export
-assignLinage <- function(geneID) {
-  
-}
-
 # mergeMetaCVwithBlast============================
 #
+#' merge MetaCV with Blast results
+#'
 #' compare the results of a MetaCVReport object with the results of a 
 #' BlastReportDB object to find hits contained in both of them
 #' 
-#' @param metaCVReport A \code{\linkS4class{metaCVReport}] object.
-#' @param blastReportDB
+#' @param metaCVReport A metaCVReport object.
+#' @param blastReportDB blastReportDB
 #' 
 #' @rdname MetaCVReport-methods
 #' @export
@@ -93,36 +72,4 @@ mergeMetaCVwithBlast <- function(metaCVReport,blastReportDB) {
   # füge eine extra spalte ein welches programm dieses fund gemacht hat
   # blastn - metacv - beide
   
-}
-
-# extractEukaryoticDB============================
-#
-#' find only the eukaryotic hits in the blastReportDB object, basing on the 
-#' linage and seperate them in an own database
-#' 
-#' @param metaCVReport A \code{\linkS4class{metaCVReport}] object.
-#' @param path path to the taxonomy database
-#' 
-#' @rdname MetaCVReport-methods
-#' @export
-extractEukaryoticDB <- function(path_to_DB) {
-  print("suche nach eukaryotischen reads")
-  print("extrahiere aus den einzelnen tables die betreffenden werte")
-  print("erzeuge neue Datenbank aus den Werten")
-}
-
-# extractEukaryoticDB============================
-#
-#' find only prokaryotic hits in the blastReportDB object, basing on the
-#' linage and separate them in an own database
-#' 
-#' @param metaCVReport A \code{\linkS4class{metaCVReport}] object.
-#' @param path path to the taxonomy database
-#' 
-#' @rdname MetaCVReport-methods
-#' @export
-extractProkaryoticDB <- function(path_to_DB) {
-  print("suche nach eukaryotischen reads")
-  print("extrahiere aus den einzelnen tables die betreffenden werte")
-  print("erzeuge neue Datenbank aus den Werten")
 }
