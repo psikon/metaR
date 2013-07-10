@@ -1,7 +1,7 @@
 
 # connection herstellen
-blastCon <- blastReportDBConnect("/home/psehnert/daten/SPICEIII/miseq/sample64/blast.test.db")
-taxCon <- connectTaxonDB("/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/program/db/")
+blastCon <- blastReportDBConnect("blast.test.db")
+taxCon <- connectTaxonDB("../")
 # ort der taxon db
 
 
@@ -17,7 +17,6 @@ db_df <- assignTaxon(1:1000,
                      taxon_db = taxCon)
 
 ## Funktionen schreiben 
-# db_bulk_insert mit reset_at
 # doku
 # 
 createTaxonomyTable(blastDB=blastCon)

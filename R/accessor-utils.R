@@ -2,6 +2,7 @@
 #' @importFrom plyr arrange
 #' @importFrom plyr desc
 #' @importFrom ncbi getRank
+#' @importFrom ncbi getParentTaxId
 NULL
 
 #' check ranks of taxon(s) against reference
@@ -11,7 +12,7 @@ NULL
 #' 
 #' @return \code{TRUE/FALSE}
 #' 
-#' @rdname accessor-utils
+#' @rdname has_ranks
 #' @export
 setGeneric("has_ranks", function (x, ranks, ...) standardGeneric("has_ranks"))
 setMethod("has_ranks", "Taxon", function (x, ranks) {
@@ -70,19 +71,26 @@ getHsp <- function(x,id) {
     IRanges(start=pos$query_from,end=pos$query_to,names=pos$hit_id)
   })
 }
-
+#'@keywords internal
 .filterHsp <- function(x,df,perc) { 
-  # order the hsps for 
+  # get all hsp(s) bit_score >= tolerance threshold
   df <- df[which(df['bit_score']>=max(df['bit_score'])*perc),]  
+  # sort them descending by bit_score
   df <- arrange(df,desc(x=df['bit_score']))
+  # remove duplicates
   df <- df[!duplicated(df['hit_id']),]
   df
 }
 
+#'@keywords internal
+# after filtering of the hsp(s) the hit(s) have to be adjusted to prevent hit(s) without hsp(s)
 .reduceHitsFromHsps <- function(hits, hsps) {
   hits[apply(hits, 1, function(x) any(x %in% hsps$hit_id)), ]
 }
 
+
+#'@keywords internal
+# recursive walk through the taxonomy tree until taxon has a valid rank
 setGeneric('.resolveNoRank', function(taxon, taxonDB, ...) standardGeneric('.resolveNoRank'))
 setMethod('.resolveNoRank', 'Taxon',
           function (taxon, taxonDB) {
@@ -98,7 +106,7 @@ setMethod('.resolveNoRank', 'TaxonList',
             ncbi:::TaxonList(lapply(taxon, .resolveNoRank, taxonDB = taxonDB))
           })
 
-
+# extend the setAs frunction to convert taxon in data.frame
 setAs("Taxon", "data.frame", function (from) {
   data.frame(tax_id = from@TaxId, scientific_name = from@ScientificName, rank = from@Rank,
              check.names=FALSE, stringsAsFactors=FALSE)
@@ -107,7 +115,11 @@ setAs("Taxon", "data.frame", function (from) {
 setAs("TaxonList", "data.frame", function (from) {
   do.call('rbind', lapply(from, as, Class='data.frame'))
 })
-
+#'find term of super kingdom of a tax_id
+#'
+#'@param tax_id
+#'
+#'@export
 assignSuperKingdom <- function (tax_id) {
   if (tax_id == 2759) {
     return("Eukaryota")
