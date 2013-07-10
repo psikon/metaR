@@ -22,7 +22,6 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
   vapply(x, has_ranks, ranks=ranks, FUN.VALUE=logical(1), USE.NAMES=FALSE)
 })
 
-
 #' select complete hit(s) 
 #' 
 #' @description wrapper function to get complete hit(s) from hit table in 
@@ -115,17 +114,38 @@ setAs("Taxon", "data.frame", function (from) {
 setAs("TaxonList", "data.frame", function (from) {
   do.call('rbind', lapply(from, as, Class='data.frame'))
 })
+
 #'find term of super kingdom of a tax_id
 #'
 #'@param tax_id
 #'
+#'@note make more general
 #'@export
 assignSuperKingdom <- function (tax_id) {
-  if (tax_id == 2759) {
-    return("Eukaryota")
-  } else if (tax_id == 2) {
-    return("Bacteria")
+  if (tax_id %in% 2759 ) {
+    classifier <- "Eukaryota"
+  } else if (tax_id %in% 2) {
+    classifier <- "Bacteria"
   } else {
-    return("unclassified")
+    classifier <- "unclassified"
+  }
+  classifier
+}
+
+.getterConstructor <- function(SELECT, FROM, ..., as = 'character') {
+  function (x, id) {
+    args <- list(...)
+    stmts <- trim(paste("SELECT", SELECT, "FROM", FROM,
+                        if (!is.null(args$WHERE)) {
+                          paste("WHERE", args$WHERE, "=", id)
+                        },
+                        if (!is.null(args$VAL) && !is.null(args$FUN)) {
+                          paste("AND", args$VAL, "= (SELECT", args$FUN,
+                                "(", args$VAL, ") FROM", FROM, "WHERE", args$WHERE, "=", id, ")")
+                        }))
+    AS <- match.fun(paste0('as.', as))
+    lapply(stmts, function(stmt) {
+      AS( db_query(x, stmt, 1L) %||% NA_character_ )
+    })
   }
 }

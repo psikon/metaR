@@ -1,4 +1,5 @@
 #'@importClassesFrom blastr blastReportDB
+#'@importFrom blastr blastReportDBConnect
 #'@importFrom rmisc db_query
 #'@importFrom rmisc db_bulk_insert
 #'@importFrom rmisc has_tables

@@ -68,7 +68,6 @@ LCA <- function(query_table,
     taxids <- getByRank(taxa, nextElem(rankIt), 'TaxId')
   # again get the taxon object
   taxa <- taxonDB(taxids, taxon_db)
-  
   if (length(taxa) == 1) {
     # if only one taxon find create the resulting data.frame
     cbind(query_table[, c('query_id', 'hit_id', 'gene_id', 'accession')],
