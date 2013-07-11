@@ -19,10 +19,11 @@ Imports:
     rmisc,
     RSQLite
 Collate:
-    'accessor-utils.R'
+    'utils.R'
     'assignTaxon.R'
     'db-functions.R'
     'lca.R'
+    'taxonomyReportDB-class.R'
     'metaR-classes.R'
     'metaR-getters.R'
     'metaR-methods.R'

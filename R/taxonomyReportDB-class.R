@@ -78,13 +78,13 @@ NULL
 #' \bold{taxonomy} with fields:
 #'
 #' \itemize{
-#'    \item query_id        INTEGER
-#'    \item hit_id          INTEGER     Primary key
-#'    \item gene_id         TEXT   
-#'    \item accession       TEXT
-#'    \item tax_id          TEXT
-#'    \item scintific_name  TEXT
-#'    \item rank            TEXT
+#'    \item query_id         INTEGER
+#'    \item hit_id           INTEGER     Primary key
+#'    \item gene_id          TEXT   
+#'    \item accession        TEXT
+#'    \item tax_id           TEXT
+#'    \item scientific_name  TEXT
+#'    \item rank             TEXT
 #' }
 #'      
 #' @name taxonomyReportDB-class
@@ -113,8 +113,7 @@ taxonomyReportDBConnect <- function (db_path) {
   new("taxonomyReportDB", con)
 }
 
-#' @usage taxonomyReportDBConnect(blast_db,taxonomy_table)
-#' @return A \code{\linkS4class{taxonomyReportDB}} object.
+#' @usage createTaxonomyReportDB(blast_db,taxonomy_table)
 #' @rdname taxonomyReportDB-class
 #' @export
 createTaxonomyReportDB <- function (blast_db,taxonomy_table) {
@@ -123,7 +122,17 @@ createTaxonomyReportDB <- function (blast_db,taxonomy_table) {
   new("taxonomyReportDB",blast_db)
 }
 
+####################################################################################
 
+#' getQueryId
+#' 
+#'@description getter for taxonomyReportDB
+#'
+#'@param x   taxonomyReportDB object
+#'@param id  tax_id
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getQueryId", function(x, ...) standardGeneric("getQueryId"))
 
 .getQueryId <- getterConstructor ('query_id', 'taxonomy', WHERE='tax_id',as='integer')
@@ -131,6 +140,10 @@ setMethod("getQueryId", "taxonomyReportDB", function (x,id) {
   unlist(.getQueryId(x,id))
 })
 
+#' getHitId
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getHitId", function(x, ...) standardGeneric("getHitId"))
 
 .getHitId <- getterConstructor ('hit_id', 'taxonomy', WHERE='tax_id',as='integer')
@@ -138,18 +151,33 @@ setMethod("getHitId", signature='taxonomyReportDB', function (x,id) {
   unlist(.getHitId(x,id))
 })
 
+#' getGeneId
+#'
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getGeneId", function(x, ...) standardGeneric("getGeneId"))
 
 .getGeneId <- getterConstructor ('gene_id', 'taxonomy', WHERE='tax_id')
 setMethod("getGeneId", "taxonomyReportDB", function (x,id) {
   unlist(.getGeneId(x,id))
 })
+
+#' getAccession
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getAccession", function(x, ...) standardGeneric("getAccession"))
 
 .getAccession <- getterConstructor ('accession', 'taxonomy', WHERE='tax_id')
 setMethod("getAccession", "taxonomyReportDB", function (x,id) {
   unlist(.getAccession(x,id))
 })
+
+#' getScientificName
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getScientificName", function(x, ...) standardGeneric("getScientificName"))
 
 .getScientificName <- getterConstructor ('scientific_name', 'taxonomy', WHERE='tax_id')
@@ -157,6 +185,10 @@ setMethod("getScientificName", "taxonomyReportDB", function (x,id) {
   unlist(.getScientificName(x,id))
 })
 
+#' getRank
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getRank", function(x, ...) standardGeneric("getRank"))
 
 .getRank <- getterConstructor ('rank', 'taxonomy', WHERE='tax_id')
@@ -164,6 +196,10 @@ setMethod("getRank", "taxonomyReportDB", function (x,id) {
   unlist(.getRank(x,id))
 })
 
+#' getQueryDef
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getQueryDef", function(x, ...) standardGeneric("getQueryDef"))
 
 .getQueryDef <- getterConstructor ('query_def', 'query', WHERE='query_id',

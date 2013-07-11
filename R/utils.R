@@ -29,11 +29,11 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
     db_query(x, stmt) %||% NA_character_ 
   })))
 }
-
+#'@keywords internal
 .getHit <- function (x,id) {
   db_query(x,paste("SELECT * FROM hit WHERE query_id=",id))
 }
-
+#'@keywords internal
 .getHsp <- function (x,id) {
   db_query(x,paste("SELECT * FROM hsp WHERE query_id=",id))
 }
@@ -82,6 +82,15 @@ setAs("TaxonList", "data.frame", function (from) {
   do.call('rbind', lapply(from, as, Class='data.frame'))
 })
 
+#' classify tax_id(s) by taxRanks
+#'
+#'@param df data.frame for classification
+#'@param taxRank valid rank from ncbi taxonomy
+#'@param taxon_db connection object to taxonomy db
+#'
+#'@return x
+#'
+#'@export
 classify <- function(df,taxRank,taxon_db) {
   if (!taxRank %in% ncbi:::.ranks) {
     stop("'taxRank' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
@@ -93,7 +102,7 @@ classify <- function(df,taxRank,taxon_db) {
   x
 }
 
-
+#'@keywords internal
 getterConstructor <- function(SELECT, FROM, ..., as = 'character') {
   function (x, id) {
     args <- list(...)
