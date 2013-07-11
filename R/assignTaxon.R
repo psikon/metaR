@@ -56,7 +56,7 @@ assignTaxon <- function (query_id,
 {
   # filter hits for query coverage
   coverage_threshold_idx <- which(getQueryCoverage(blast_db, query_id) >= coverage_threshold)
-  candidate_hits <- getHit(blast_db, query_id)[coverage_threshold_idx, ]
+  candidate_hits <- .getHit(blast_db, query_id)[coverage_threshold_idx, ]
   if (nrow(candidate_hits) >= 1) {
     # get the hsp(s) of the hit(s)
     candidate_hsps <- .getSelectedHits(blast_db, query_id, getHitID(blast_db, query_id)[coverage_threshold_idx])
