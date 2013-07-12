@@ -38,13 +38,13 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
   db_query(x,paste("SELECT * FROM hsp WHERE query_id=",id))
 }
 #'@keywords internal
-.filterHsp <- function(x,df,perc) { 
+.filterHsp <- function(df, perc) { 
   # get all hsp(s) bit_score >= tolerance threshold
-  df <- df[which(df['bit_score']>=max(df['bit_score'])*perc),]  
+  df <- df[which(df[ 'bit_score' ] >= max(df[ 'bit_score' ]) * perc),]  
   # sort them descending by bit_score
-  df <- arrange(df,desc(x=df['bit_score']))
+  df <- arrange(df, desc(df[ 'bit_score' ]))
   # remove duplicates
-  df <- df[!duplicated(df['hit_id']),]
+  df <- df[!duplicated(df[ 'hit_id' ]),]
   df
 }
 

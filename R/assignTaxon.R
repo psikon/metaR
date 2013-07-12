@@ -61,7 +61,7 @@ assignTaxon <- function (query_id,
     # get the hsp(s) of the hit(s)
     candidate_hsps <- .getSelectedHits(blast_db, query_id, getHitID(blast_db, query_id)[coverage_threshold_idx])
     # filter the hsp(s) basing on tolerance threshold
-    candidate_hsps <- .filterHsp(blast_db, candidate_hsps, perc = bitscore_tolerance)
+    candidate_hsps <- .filterHsp(candidate_hsps, perc = bitscore_tolerance)
     # remove hit(s) without hsp(s)
     candidate_hits <- .reduceHitsFromHsps(candidate_hits, candidate_hsps)
     # reset row numbers

@@ -116,10 +116,34 @@ taxonomyReportDBConnect <- function (db_path) {
 #' @usage createTaxonomyReportDB(blast_db,taxonomy_table)
 #' @rdname taxonomyReportDB-class
 #' @export
-createTaxonomyReportDB <- function (blast_db,taxonomy_table) {
-  createTaxonomyTable(blast_db)
-  updateTaxonomyTable(blast_db,taxonomy_table)
-  new("taxonomyReportDB",blast_db)
+createTaxonomyReportDB <- function (db_name,blast_db,taxonomy_table, bitscore_tolerance) {
+  # create a new database with blastReportDB Schema
+  con <- db_create(db_name,dbSchema=blastr:::blast_db.sql)
+  # reduce and insert the hit table 
+  updateTable(con,'hit', do.call(rbind, lapply(taxonomy_table$hit_id, 
+                FUN = function(x) {
+                  db_query(blast_db, paste("SELECT * FROM hit WHERE hit_id =", x))
+                })))
+  # reduce and insert the query table
+  updateTable(con, 'query', unique(do.call(rbind, lapply(taxonomy_table$hit_id,
+                FUN=function(x) {
+                  db_query(blast_db,paste("SELECT * FROM query 
+                          WHERE query_id = (SELECT query_id FROM hit 
+                                            WHERE hit_id =", x, ")"))
+                  }))))
+  # and finally reduce and insert the hsp table
+  updateTable(con, 'hsp', do.call(rbind, lapply(taxonomy_table$hit_id,
+                FUN = function(x) {
+                  # need to filter again towards bitscore_tolerance
+                  .filterHsp(db_query(blast_db, 
+                                      paste("SELECT * FROM hsp 
+                                             WHERE hit_id = (SELECT hit_id FROM hit 
+                                                             WHERE hit_id =", x, ")")),
+                             perc = bitscore_tolerance)
+  })))
+  createTable(con,'taxonomy',taxonomy_create.sql)
+  updateTable(con,'taxonomy',taxonomy_table)
+  new('taxonomyReportDB',con)
 }
 
 ####################################################################################
