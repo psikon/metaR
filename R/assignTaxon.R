@@ -21,6 +21,7 @@
 #'
 #'@importFrom rmisc compact
 #'@importFrom blastr getQueryCoverage
+#'@importFrom blastr getHitID
 #'
 #'@seealso \code{\link{LCA}}
 #'

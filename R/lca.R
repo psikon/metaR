@@ -4,6 +4,7 @@
 #'@importFrom ncbi getByRank
 #'@importFrom ncbi taxonDB
 #'@importFrom ncbi getLineage
+#'@importFrom ncbi getTaxId
 #'@importFrom iterators iter
 #'@importFrom iterators nextElem
 #'@importFrom assertthat assert_that

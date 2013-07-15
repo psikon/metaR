@@ -1,8 +1,14 @@
-#' @importFrom IRanges IRanges
-#' @importFrom plyr arrange
-#' @importFrom plyr desc
+#' @importFrom rmisc trim
+#' @importFrom rmisc db_query
+#' @importFrom rmisc '%||%'
+#' @importClassesFrom ncbi Taxon
+#' @importClassesFrom ncbi TaxonList
+#' @importFrom ncbi taxonDB
 #' @importFrom ncbi getRank
 #' @importFrom ncbi getParentTaxId
+#' @importFrom plyr arrange
+#' @importFrom plyr desc
+#' @importFrom methods as
 NULL
 
 #' check ranks of taxon(s) against reference
@@ -103,23 +109,25 @@ classify <- function(df,taxRank,taxon_db) {
 }
 
 #'@keywords internal
-getterConstructor <- function(SELECT, FROM, ..., as = 'character') {
-  function (x, id) {
+.getterConstructor <- function(SELECT, FROM, ..., as = 'character') {
+  function (x, id, typ) {
     args <- list(...)
-    stmts <- trim(paste("SELECT", SELECT, "FROM", FROM,
-                        if (!is.null(args$WHERE)) {
-                          paste("WHERE", args$WHERE, "=", id)
-                        },                       
-                        if (!is.null(args$VAL) && !is.null(args$WHERE) && !is.null(args$FROM2)) {
-                          paste("WHERE", args$WHERE ,"= (SELECT", args$WHERE, "FROM", args$FROM2, "WHERE", args$VAL, "=", id, ")")
+    assert_that(typ %in% c('tax_id', 'query_id', 'hit_id'))
+    stmts <- trim(paste("SELECT", SELECT, 'FROM', FROM,
+                        if (is.null(args$WHERE)) {
+                          paste('WHERE', typ, '=', id)
+                        } else {
+                          paste('WHERE', args$WHERE,'=')
                         },
-                        if (!is.null(args$VAL) && !is.null(args$FUN)) {
-                          paste("AND", args$VAL, "= (SELECT", args$FUN,
-                                "(", args$VAL, ") FROM", FROM, "WHERE", args$WHERE, "=", id, ")")
+                        if (!is.null(args$VAL) && !is.null(args$TABLE)) {
+                          paste('(SELECT', args$VAL, 'FROM', args$TABLE,
+                                'WHERE', typ, '=', id,')')
                         }))
     AS <- match.fun(paste0('as.', as))
     lapply(stmts, function(stmt) {
-      AS( db_query(x, stmt,1L) %||% NA_character_ )
-    })
+                AS( db_query(x, stmt,1L) %||% NA_character_ )
+            })
   }
 }
+
+

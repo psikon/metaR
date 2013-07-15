@@ -27,3 +27,4 @@ Collate:
     'metaR-classes.R'
     'metaR-getters.R'
     'metaR-methods.R'
+    'taxonomyReportDB-getter.R'

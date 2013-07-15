@@ -16,6 +16,11 @@
 #' @param ... Slots for \sQuote{metaCV-Report} instances.
 #' @name metaCVReport-class
 #' @rdname metaCVReport-class
+#' 
+#' @importFrom methods setOldClass
+#' @importFrom methods setClass
+#' @importFrom methods setMethod
+#' 
 #' @exportClass metaCVReport
 #' @aliases show,metaCVReport-method
 setOldClass('data.frame')
