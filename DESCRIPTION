@@ -8,7 +8,9 @@ Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Depends:
-    R (>= 2.15)
+    R (>= 2.15),
+    blastr,
+    rmisc
 Imports:
     assertthat,
     blastr,
@@ -17,7 +19,8 @@ Imports:
     ncbi,
     plyr,
     rmisc,
-    RSQLite
+    RSQLite,
+    methods
 Collate:
     'utils.R'
     'assignTaxon.R'

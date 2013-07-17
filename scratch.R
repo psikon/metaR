@@ -1,7 +1,16 @@
+require(metaR)
+require(blastr)
+require(rmisc)
+require(assertthat)
+
+## doku compelieren
+library(devtools)
+document(pkg=".",clean=T)
 
 # connection herstellen
 blastReport <- blastReportDBConnect("../blast.test.db")
-taxDB <- connectTaxonDB("/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/program/db/")
+taxDB <- connectTaxonDB("/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/program/db")
+#taxDB <- connectTaxonDB("../")
 
 # taxonomy data.frame erstellen
 db_df <- assignTaxon(1:1000, 
@@ -10,33 +19,12 @@ db_df <- assignTaxon(1:1000,
                      blast_db = blastReport, 
                      taxon_db = taxDB)
 
-
-
-
 # Klassifizierer für datenbank split             
 classify <- classify(db_df,'superkingdom',taxDB)
 
 # alles in ein neues Objekt umschichten
 taxReport <- createTaxonomyReportDB('taxonomy', blastReport, db_df, 0.98)
 taxReport
-
-
-blast64 <- blastReportDBConnect("/home/psehnert/daten/SPICEIII/miseq/sample64/blastn/sample64.db")
-taxDB <- connectTaxonDB("/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/program/db/")
-blast64
-
-query_ids <- db_query(blast64,"SELECT query_id from query")
-db_count(blast64,'query')
-db_df <- assignTaxon(query_ids, 
-                     taxRanks = c("species", "genus", "tribe", "family", "order",
-                                  "class", "phylum", "kingdom", "superkingdom"),
-                     blast_db = blast64, 
-                     taxon_db = taxDB)
-taxReport <- createTaxonomyReportDB('taxonomy.db', 
-                                    blastReport, 
-                                    db_df, 
-                                    0.98)
-
 
 # getter Tester
 getQueryId(taxReport,94232,'tax_id')
@@ -76,20 +64,20 @@ getLineage(taxReport,5,'hit_id',taxDB)
 getLineage(taxReport,18,'query_id',taxDB)
 
 # nur ein wert bisher
-getQueryDef(taxReport,94232,'tax_id')
-getQueryDef(taxReport,5,'hit_id')
-getQueryDef(taxReport,18,'query_id')
+getQueryDef(taxReport,38293,'tax_id')
+getQueryDef(taxReport,79,'hit_id')
+getQueryDef(taxReport,153,'query_id')
 
 getQueryLen(taxReport,94232,'tax_id')
 getQueryLen(taxReport,5,'hit_id')
 getQueryLen(taxReport,18,'query_id')
 
 # hit table
-getHitNum(taxReport,94232,'tax_id')
+getHitNum(taxReport,38293,'tax_id')
 getHitNum(taxReport,5,'hit_id')
 getHitNum(taxReport,18,'query_id')
 
-getDefinition(taxReport,94232,'tax_id')
+getDefinition(taxReport,38293,'tax_id')
 getDefinition(taxReport,5,'hit_id')
 getDefinition(taxReport,18,'query_id')
 
@@ -98,7 +86,7 @@ getHitLen(taxReport,5,'hit_id')
 getHitLen(taxReport,18,'query_id')
 
 # hsp table
-getHspId(taxReport,94232,'tax_id')
+getHspId(taxReport,38293,'tax_id')
 getHspId(taxReport,5,'hit_id')
 getHspId(taxReport,18,'query_id')
 
@@ -169,3 +157,20 @@ getHitSeq(taxReport,18,'query_id')
 getMidline(taxReport,94232,'tax_id')
 getMidline(taxReport,5,'hit_id')
 getMidline(taxReport,18,'query_id')
+
+
+blast64 <- blastReportDBConnect("/home/psehnert/daten/SPICEIII/miseq/sample64/blastn/sample64.db")
+taxDB <- connectTaxonDB("/home/psehnert/daten/SPICEIII/miseq/scripts/metpipe/program/db/")
+blast64
+
+query_ids <- db_query(blast64,"SELECT query_id from query")
+hit <- db_query(blast64,"SELECT * from hit")
+db_df <- assignTaxon(18, 
+                     taxRanks = c("species", "genus", "tribe", "family", "order",
+                                  "class", "phylum", "kingdom", "superkingdom"),
+                     blast_db = blast64, 
+                     taxon_db = taxDB)
+taxReport <- createTaxonomyReportDB('/home/psehnert/daten/SPICEIII/miseq/sample64/taxonomy64.db', 
+                                    blastReport, 
+                                    db_df, 
+                                    0.98)

@@ -108,6 +108,7 @@ setMethod('getLineage','taxonomyReportDB', function (x, id, typ, taxon_db) {
 
 # Query Table
 
+.getUniversalID <- .getterConstructor(typ,'taxonomy')
 #' getQueryDef
 #'
 #'@rdname taxonomyReportDB-getter
@@ -118,7 +119,7 @@ setGeneric("getQueryDef", function(x, ...) standardGeneric("getQueryDef"))
                                     VAL = 'query_id', TABLE = 'taxonomy', 
                                     as = 'character')
 setMethod("getQueryDef", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getQueryDef(x, id, typ))
+  unlist(.getQueryDef(x, getQueryId(x,id,typ), 'query_id'))
 })
 
 #' getQueryLen
@@ -129,9 +130,9 @@ setGeneric("getQueryLen", function(x, ...) standardGeneric("getQueryLen"))
 
 .getQueryLen <- .getterConstructor ('query_len', 'query', WHERE = 'query_id',
                                     VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+                                    as = 'integer')
 setMethod("getQueryLen", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getQueryLen(x, id, typ))
+  unlist(.getQueryLen(x, getQueryId(x,id,typ), 'query_id'))
 })
 
 # hit Table
@@ -142,11 +143,11 @@ setMethod("getQueryLen", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHitNum", function(x, ...) standardGeneric("getHitNum"))
 
-.getHitNum <- .getterConstructor ('hit_num', 'hit', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getHitNum <- .getterConstructor ('hit_num', 'hit', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getHitNum", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHitNum(x, id, typ))
+  unlist(.getHitNum(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getDefinition
@@ -155,11 +156,11 @@ setMethod("getHitNum", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getDefinition", function(x, ...) standardGeneric("getDefinition"))
 
-.getDefinition <- .getterConstructor ('definition', 'hit', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
+.getDefinition <- .getterConstructor ('definition', 'hit', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
                                     as = 'character')
 setMethod("getDefinition", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getDefinition(x, id, typ))
+  unlist(.getDefinition(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getHitLen
@@ -168,11 +169,11 @@ setMethod("getDefinition", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHitLen", function(x, ...) standardGeneric("getHitLen"))
 
-.getHitLen <- .getterConstructor ('length', 'hit', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getHitLen <- .getterConstructor ('length', 'hit', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getHitLen", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHitLen(x, id, typ))
+  unlist(.getHitLen(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 # hsp table
@@ -183,11 +184,11 @@ setMethod("getHitLen", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHspId", function(x, ...) standardGeneric("getHspId"))
 
-.getHspId <- .getterConstructor ('hsp_id', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getHspId <- .getterConstructor ('hsp_id', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getHspId", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHspId(x, id, typ))
+  unlist(.getHspId(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getHspNum
@@ -196,11 +197,11 @@ setMethod("getHspId", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHspNum", function(x, ...) standardGeneric("getHspNum"))
 
-.getHspNum <- .getterConstructor ('hsp_num', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getHspNum <- .getterConstructor ('hsp_num', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getHspNum", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHspNum(x, id, typ))
+  unlist(.getHspNum(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getBitScore
@@ -209,11 +210,11 @@ setMethod("getHspNum", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getBitScore", function(x, ...) standardGeneric("getBitScore"))
 
-.getBitScore <- .getterConstructor ('bit_score', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getBitScore <- .getterConstructor ('bit_score', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'numeric')
 setMethod("getBitScore", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getBitScore(x, id, typ))
+  unlist(.getBitScore(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getScore
@@ -222,11 +223,11 @@ setMethod("getBitScore", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getScore", function(x, ...) standardGeneric("getScore"))
 
-.getScore <- .getterConstructor ('score', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getScore <- .getterConstructor ('score', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'numeric')
 setMethod("getScore", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getScore(x, id, typ))
+  unlist(.getScore(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getEvalue
@@ -235,11 +236,11 @@ setMethod("getScore", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getEvalue", function(x, ...) standardGeneric("getEvalue"))
 
-.getEvalue <- .getterConstructor ('evalue', 'hsp', WHERE = 'query_id',
-                                 VAL = 'query_id', TABLE = 'taxonomy', 
-                                 as = 'character')
+.getEvalue <- .getterConstructor ('evalue', 'hsp', WHERE = 'hit_id',
+                                 VAL = 'hit_id', TABLE = 'taxonomy', 
+                                 as = 'numeric')
 setMethod("getEvalue", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getEvalue(x, id, typ))
+  unlist(.getEvalue(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getQueryFrom
@@ -248,11 +249,11 @@ setMethod("getEvalue", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getQueryFrom", function(x, ...) standardGeneric("getQueryFrom"))
 
-.getQueryFrom <- .getterConstructor ('query_from', 'hsp', WHERE = 'query_id',
-                                 VAL = 'query_id', TABLE = 'taxonomy', 
-                                 as = 'character')
+.getQueryFrom <- .getterConstructor ('query_from', 'hsp', WHERE = 'hit_id',
+                                 VAL = 'hit_id', TABLE = 'taxonomy', 
+                                 as = 'integer')
 setMethod("getQueryFrom", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getQueryFrom(x, id, typ))
+  unlist(.getQueryFrom(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getQueryTo
@@ -261,11 +262,11 @@ setMethod("getQueryFrom", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getQueryTo", function(x, ...) standardGeneric("getQueryTo"))
 
-.getQueryTo <- .getterConstructor ('query_to', 'hsp', WHERE = 'query_id',
-                                 VAL = 'query_id', TABLE = 'taxonomy', 
-                                 as = 'character')
+.getQueryTo <- .getterConstructor ('query_to', 'hsp', WHERE = 'hit_id',
+                                 VAL = 'hit_id', TABLE = 'taxonomy', 
+                                 as = 'integer')
 setMethod("getQueryTo", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getQueryTo(x, id, typ))
+  unlist(.getQueryTo(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getHitFrom
@@ -274,11 +275,11 @@ setMethod("getQueryTo", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHitFrom", function(x, ...) standardGeneric("getHitFrom"))
 
-.getHitFrom <- .getterConstructor ('hit_from', 'hsp', WHERE = 'query_id',
-                                 VAL = 'query_id', TABLE = 'taxonomy', 
-                                 as = 'character')
+.getHitFrom <- .getterConstructor ('hit_from', 'hsp', WHERE = 'hit_id',
+                                 VAL = 'hit_id', TABLE = 'taxonomy', 
+                                 as = 'integer')
 setMethod("getHitFrom", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHitFrom(x, id, typ))
+  unlist(.getHitFrom(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getHitTo
@@ -287,11 +288,11 @@ setMethod("getHitFrom", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHitTo", function(x, ...) standardGeneric("getHitTo"))
 
-.getHitTo <- .getterConstructor ('hit_to', 'hsp', WHERE = 'query_id',
-                                 VAL = 'query_id', TABLE = 'taxonomy', 
-                                 as = 'character')
+.getHitTo <- .getterConstructor ('hit_to', 'hsp', WHERE = 'hit_id',
+                                 VAL = 'hit_id', TABLE = 'taxonomy', 
+                                 as = 'integer')
 setMethod("getHitTo", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHitTo(x, id, typ))
+  unlist(.getHitTo(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getQueryFrame
@@ -300,11 +301,11 @@ setMethod("getHitTo", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getQueryFrame", function(x, ...) standardGeneric("getQueryFrame"))
 
-.getQueryFrame <- .getterConstructor ('query_frame', 'hsp', WHERE = 'query_id',
-                                 VAL = 'query_id', TABLE = 'taxonomy', 
+.getQueryFrame <- .getterConstructor ('query_frame', 'hsp', WHERE = 'hit_id',
+                                 VAL = 'hit_id', TABLE = 'taxonomy', 
                                  as = 'character')
 setMethod("getQueryFrame", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getQueryFrame(x, id, typ))
+  unlist(.getQueryFrame(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getHitFrame
@@ -313,11 +314,11 @@ setMethod("getQueryFrame", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHitFrame", function(x, ...) standardGeneric("getHitFrame"))
 
-.getHitFrame <- .getterConstructor ('hit_frame', 'hsp', WHERE = 'query_id',
-                                      VAL = 'query_id', TABLE = 'taxonomy', 
+.getHitFrame <- .getterConstructor ('hit_frame', 'hsp', WHERE = 'hit_id',
+                                      VAL = 'hit_id', TABLE = 'taxonomy', 
                                       as = 'character')
 setMethod("getHitFrame", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHitFrame(x, id, typ))
+  unlist(.getHitFrame(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getIdentity
@@ -326,11 +327,11 @@ setMethod("getHitFrame", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getIdentity", function(x, ...) standardGeneric("getIdentity"))
 
-.getIdentity <- .getterConstructor ('identity', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getIdentity <- .getterConstructor ('identity', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getIdentity", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getIdentity(x, id, typ))
+  unlist(.getIdentity(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getPositive
@@ -339,11 +340,11 @@ setMethod("getIdentity", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getPositive", function(x, ...) standardGeneric("getPositive"))
 
-.getPositive <- .getterConstructor ('positive', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getPositive <- .getterConstructor ('positive', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getPositive", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getPositive(x, id, typ))
+  unlist(.getPositive(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getGaps
@@ -352,11 +353,11 @@ setMethod("getPositive", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getGaps", function(x, ...) standardGeneric("getGaps"))
 
-.getGaps <- .getterConstructor ('gaps', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getGaps <- .getterConstructor ('gaps', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getGaps", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getGaps(x, id, typ))
+  unlist(.getGaps(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getAlignLen
@@ -365,11 +366,11 @@ setMethod("getGaps", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getAlignLen", function(x, ...) standardGeneric("getAlignLen"))
 
-.getAlignLen <- .getterConstructor ('align_len', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
-                                    as = 'character')
+.getAlignLen <- .getterConstructor ('align_len', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
+                                    as = 'integer')
 setMethod("getAlignLen", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getAlignLen(x, id, typ))
+  unlist(.getAlignLen(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getQuerySeq
@@ -378,11 +379,11 @@ setMethod("getAlignLen", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getQuerySeq", function(x, ...) standardGeneric("getQuerySeq"))
 
-.getQuerySeq <- .getterConstructor ('qseq', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
+.getQuerySeq <- .getterConstructor ('qseq', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
                                     as = 'character')
 setMethod("getQuerySeq", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getQuerySeq(x, id, typ))
+  unlist(.getQuerySeq(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getHitSeq
@@ -391,11 +392,11 @@ setMethod("getQuerySeq", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getHitSeq", function(x, ...) standardGeneric("getHitSeq"))
 
-.getHitSeq <- .getterConstructor ('hseq', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
+.getHitSeq <- .getterConstructor ('hseq', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
                                     as = 'character')
 setMethod("getHitSeq", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getHitSeq(x, id, typ))
+  unlist(.getHitSeq(x, getHitId(x,id,typ), 'hit_id'))
 })
 
 #' getMidline
@@ -404,9 +405,9 @@ setMethod("getHitSeq", "taxonomyReportDB", function (x, id, typ) {
 #'@export
 setGeneric("getMidline", function(x, ...) standardGeneric("getMidline"))
 
-.getMidline <- .getterConstructor ('midline', 'hsp', WHERE = 'query_id',
-                                    VAL = 'query_id', TABLE = 'taxonomy', 
+.getMidline <- .getterConstructor ('midline', 'hsp', WHERE = 'hit_id',
+                                    VAL = 'hit_id', TABLE = 'taxonomy', 
                                     as = 'character')
 setMethod("getMidline", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getMidline(x, id, typ))
+  unlist(.getMidline(x, getHitId(x,id,typ), 'hit_id'))
 })
