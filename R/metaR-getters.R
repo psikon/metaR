@@ -5,7 +5,6 @@
 #' @param x A metaCVReport object.
 #' @param i index of the Object
 #' 
-#' @importFrom methods setGeneric 
 #' @rdname MetaCVReport-class
 #' @export
 setGeneric("getReadName", function(x, ...) standardGeneric("getReadName"))

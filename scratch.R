@@ -32,7 +32,7 @@ db_df <- assignTaxon(query_ids,
                                   "class", "phylum", "kingdom", "superkingdom"),
                      blast_db = blast64, 
                      taxon_db = taxDB)
-taxReport <- createTaxonomyReportDB('taxonomy.db', 
+taxReport <- createTaxonomyReportDB('/home/psehnert/daten/SPICEIII/miseq/sample64/taxonomy64.db', 
                                     blastReport, 
                                     db_df, 
                                     0.98)

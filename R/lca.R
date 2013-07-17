@@ -8,7 +8,9 @@
 #'@importFrom iterators iter
 #'@importFrom iterators nextElem
 #'@importFrom assertthat assert_that
+#'@importFrom assertthat '%has_name%'
 #'@importFrom rmisc nunique
+#'@importFrom rmisc is.empty
 NULL
 
 #'find the least common ancestor inside a blast query with multiple hits
@@ -81,8 +83,8 @@ LCA <- function(query_table,
     query_table <- query_table[valid, ]
     taxa <- taxa[valid]
     # determine the linage and unique TaxId(s)
-    lineage <- getLineage(taxa)
-    taxids <- unique(getTaxId(taxa))
+    lineage <- ncbi::getLineage(taxa)
+    taxids <- unique(ncbi::getTaxId(taxa))
     while (length(taxids) > 1 || all(is.na(taxids))) {
       # traverse through the ranks until all TaxId(s) are unique
       taxids <- unique(getByRank(lineage, nextElem(rankIt), 'TaxId'))

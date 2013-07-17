@@ -8,7 +8,6 @@
 #' @importFrom ncbi getParentTaxId
 #' @importFrom plyr arrange
 #' @importFrom plyr desc
-#' @importFrom methods as
 NULL
 
 #' check ranks of taxon(s) against reference
@@ -108,6 +107,10 @@ classify <- function(df,taxRank,taxon_db) {
   x
 }
 
+KronaTable <- function() {
+  print("create input file for krona webtools")  
+}
+
 #'@keywords internal
 .getterConstructor <- function(SELECT, FROM, ..., as = 'character') {
   function (x, id, typ) {
@@ -129,5 +132,6 @@ classify <- function(df,taxRank,taxon_db) {
             })
   }
 }
+
 
 
