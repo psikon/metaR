@@ -11,7 +11,6 @@
 #'@importFrom rmisc db_count
 #'@importFrom rmisc db_connect
 #'@importFrom rmisc db_create
-#'@importFrom rmisc db_query
 #'@importFrom assertthat assert_that
 #'@importFrom assertthat is.readable
 NULL

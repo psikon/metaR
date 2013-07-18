@@ -1,13 +1,8 @@
-#'@importClassesFrom ncbi Taxon
-#'@importClassesFrom ncbi TaxonList
 #'@importFrom ncbi taxonByGeneID
 #'@importFrom ncbi getByRank
-#'@importFrom ncbi taxonDB
-#'@importFrom ncbi getLineage
 #'@importFrom ncbi getTaxId
 #'@importFrom iterators iter
 #'@importFrom iterators nextElem
-#'@importFrom assertthat assert_that
 #'@importFrom assertthat '%has_name%'
 #'@importFrom rmisc nunique
 #'@importFrom rmisc is.empty

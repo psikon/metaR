@@ -1,11 +1,5 @@
 #' @importFrom rmisc trim
-#' @importFrom rmisc db_query
 #' @importFrom rmisc '%||%'
-#' @importClassesFrom ncbi Taxon
-#' @importClassesFrom ncbi TaxonList
-#' @importFrom ncbi taxonDB
-#' @importFrom ncbi getRank
-#' @importFrom ncbi getParentTaxId
 #' @importFrom plyr arrange
 #' @importFrom plyr desc
 NULL
@@ -96,16 +90,7 @@ setAs("TaxonList", "data.frame", function (from) {
 #'@return x
 #'
 #'@export
-classify <- function(df,taxRank,taxon_db) {
-  if (!taxRank %in% ncbi:::.ranks) {
-    stop("'taxRank' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
-  }
-  x <- getByRank(taxonDB(df[['tax_id']],taxon_db[[1]]),
-                 rank=taxRank,
-                 value='TaxId')
-  x[is.na(x)] <- "unclassified"
-  x
-}
+
 
 KronaTable <- function() {
   print("create input file for krona webtools")  

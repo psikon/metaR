@@ -1,5 +1,10 @@
 #'@importFrom ncbi taxonDB
+#'@importClassesFrom ncbi Taxon
+#'@importClassesFrom ncbi TaxonList
+#'@importFrom ncbi getRank
 #'@importFrom ncbi getLineage
+#'@importFrom ncbi getOtherName
+#'@importFrom ncbi getParentTaxId
 NULL
 # Taxonomy Table
 
@@ -55,7 +60,7 @@ setMethod("getAccession", "taxonomyReportDB", function (x, id, typ) {
 
 #' getTaxId
 #' 
-#'@rdname taxonomyReportDB
+#'@rdname taxonomyReportDB-getter
 #'@export
 setGeneric("getTaxId", function(x, ...) standardGeneric("getTaxId"))
 
@@ -103,12 +108,31 @@ setMethod('getTaxon','taxonomyReportDB', function (x, id, typ, taxon_db) {
 setGeneric('getLineage', function(x, ...) standardGeneric('getLineage'))
 
 setMethod('getLineage','taxonomyReportDB', function (x, id, typ, taxon_db) {
-  getLineage(taxonDB(getTaxId(x, id, typ), taxon_db[[1]]))
+  getLineage(getTaxon(x, id, typ , taxon_db))
+})
+
+#'getOtherName
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
+setGeneric('getOtherName', function(x, ...) standardGeneric('getOtherName'))
+
+setMethod('getOtherName','taxonomyReportDB', function (x, id, typ, taxon_db) {
+  getOtherName(getTaxon(x, id, typ , taxon_db))
+})
+
+#'getParentTaxId
+#'
+#'@rdname taxonomyReportDB-getter
+#'@export
+setGeneric('getParentTaxId', function(x, ...) standardGeneric('getParentTaxId'))
+
+setMethod('getParentTaxId','taxonomyReportDB', function (x, id, typ, taxon_db) {
+  getParentTaxId(getTaxon(x, id, typ , taxon_db))
 })
 
 # Query Table
 
-.getUniversalID <- .getterConstructor(typ,'taxonomy')
 #' getQueryDef
 #'
 #'@rdname taxonomyReportDB-getter
