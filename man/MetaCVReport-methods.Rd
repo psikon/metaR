@@ -2,7 +2,7 @@
 \alias{mergeMetaCVwithBlast}
 \alias{metaCVReport}
 \alias{taxonCount}
-\title{import a metaCV .res file}
+\title{Import a metaCV .res file}
 \usage{
   mergeMetaCVwithBlast(metaCVReport, blastReportDB)
 }
@@ -19,8 +19,8 @@
   Import the Results of the .res File from MetaCV to a R
   and creates an metaCVReport object
 
-  creates a df, that contains the counts ordered by taxIds
-  and the corresponding taxName
+  creates a code{data.frame}, that contains the counts
+  ordered by taxIds and the corresponding taxName
 
   compare the results of a MetaCVReport object with the
   results of a BlastReportDB object to find hits contained

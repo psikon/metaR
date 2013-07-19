@@ -1,17 +1,9 @@
-# getReadName============================
-#
-#' Getter methods for MetaCVReport
-#' 
-#' @param x A metaCVReport object.
-#' @param i index of the Object
-#' 
-#' @rdname MetaCVReport-class
-#' @export
-setGeneric("getReadName", function(x, ...) standardGeneric("getReadName"))
+
+## Getters for metsCVReport objects
 
 #' @export
-setMethod("getReadName", signature='metaCVReport',
-          function(x, i = NULL){
+setMethod("getReadName", 'metaCVReport',
+          function (x, i = NULL) {
             if (is.null(i)) {
               x[, "readName"]
             } else {
@@ -19,19 +11,9 @@ setMethod("getReadName", signature='metaCVReport',
             }
           })
 
-# getScore============================
-#
-#' Getter methods for MetaCVReport
-#' 
-#' @param x A metaCVReport object.
-#' @param i index of the Object
-#' 
-#' @rdname MetaCVReport-class
-#' @export
-setGeneric("getScore", function(x, ...) standardGeneric("getScore"))
 
 #' @export
-setMethod("getScore",signature='metaCVReport',
+setMethod("getScore", 'metaCVReport',
           function(x, i = NULL) {
             if (is.null(i)) {
               x[, "score"]
@@ -40,19 +22,9 @@ setMethod("getScore",signature='metaCVReport',
             }
 })
 
-# getGeneID============================
-#
-#' Getter methods for MetaCVReport
-#' 
-#' @param x A metaCVReport object.
-#' @param i index of the Object
-#' 
-#' @rdname MetaCVReport-class
-#' @export
-setGeneric("getGeneID", function(x, ...) standardGeneric("getGeneID"))
 
 #' @export
-setMethod("getGeneID",signature='metaCVReport',
+setMethod("getGeneID", 'metaCVReport',
           function(x, i = NULL) {
             if (is.null(i)) {
               x[, "geneID"]
@@ -61,19 +33,9 @@ setMethod("getGeneID",signature='metaCVReport',
             }
 })
 
-# getTaxID============================
-#
-#' Getter methods for MetaCVReport
-#' 
-#' @param x A metaCVReport object.
-#' @param i index of the Object
-#' 
-#' @rdname MetaCVReport-class
-#' @export
-setGeneric("getTaxID", function(x,...) standardGeneric("getTaxID"))
 
 #' @export
-setMethod("getTaxID",signature='metaCVReport',
+setMethod("getTaxID", 'metaCVReport',
           function(x, i = NULL) {
             if (is.null(i)) {
               x[, "taxID"]
@@ -83,18 +45,8 @@ setMethod("getTaxID",signature='metaCVReport',
 })
 
 
-# getTaxName============================
-#
-#' Getter methods for MetaCVReport
-#' 
-#' @param x A metaCVReport object.
-#' @param i index of the Object
-#' 
-#' @rdname MetaCVReport-class
 #' @export
-setGeneric("getTaxName", function(x, ...) standardGeneric("getTaxName"))
-#' @export
-setMethod("getTaxName",signature='metaCVReport',
+setMethod("getTaxName", 'metaCVReport',
           function(x, i = NULL) {
             if (is.null(i)) {
               x[, "taxName"]
@@ -103,52 +55,16 @@ setMethod("getTaxName",signature='metaCVReport',
             }
 })
 
-# getGeneIDbyTaxID============================
-#
-#' get for a specifig taxID all geneID(s)
-#' 
-#' @param x A metaCVReport object.
-#' @param i taxID(s) for searching
-#' 
-#' @rdname MetaCVReport-class
+
 #' @export
-setGeneric("getGeneIDbyTaxID", function(x, i) standardGeneric("getGeneIDbyTaxID"))
-#' @export
-setMethod("getGeneIDbyTaxID",signature='metaCVReport',
+setMethod("getGeneIDbyTaxID", 'metaCVReport',
           function(x, i) {
             x[which(x[,"taxID"] == i), "geneID"]
           })
 
-# getByScore============================
-#
-#' get only the entries with a score greater than x, to prevent 
-#' wrongly classified entries
-#' 
-#' @param x A metaCVReport object.
-#' @param i score
-#' 
-#' @details The score refers to the composition identity between 
-#' the query read and the best target gene, and ranges from 0 
-#' to 100. In our analysis, reads with very low scores are highly 
-#' possible to be wrongly classified and should be filtered. 
-#' Recommended is  a set of cutoff values 
-#' (minimal scores to pass) according to different read lengths: 
-#' \itemize{
-#'   \item{Read length}{Minimal score}
-#'   \item{100 bp }{20}
-#'   \item{200 bp}{10}
-#'   \item{400 bp}{5}
-#'   \item{600 bp}{4}
-#'   \item{800 bp}{3}
-#'   \item{1000 bp}{3}
-#' } 
-#' 
-#' @rdname MetaCVReport-class
-#' @export
-setGeneric("getByScore", function(x,i) standardGeneric("getByScore"))
 
 #' @export
-setMethod("getByScore",signature='metaCVReport',
+setMethod("getByScore", 'metaCVReport',
           function(x, i) {
             x[which(x[,"score"] >= i),]
           })

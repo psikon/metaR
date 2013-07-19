@@ -1,6 +1,4 @@
 
-
-
 classify <- function(df,taxRank,taxon_db) {
   if (!taxRank %in% ncbi:::.ranks) {
     stop("'taxRank' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
@@ -13,9 +11,6 @@ classify <- function(df,taxRank,taxon_db) {
 }
 
 
-selectByRank(x=taxReport, taxRank='genus', classifier='epinephelus', taxon_db=taxDB)
-
-
 selectByRank <- function(x, taxRank, classifier, taxon_db) {
   if (!taxRank %in% ncbi:::.ranks) {
     stop("'taxRank' must be one of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
@@ -26,14 +21,3 @@ selectByRank <- function(x, taxRank, classifier, taxon_db) {
   do.call('rbind', lapply(id, function(i) db_query(x, paste('SELECT * FROM taxonomy WHERE hit_id =', i))))
 }
   
-
-
-
-
-
-  
-  r <- db_df[grep(classifier, tolower(getByRank(getTaxon(taxReport,
-                                                         db_df$hit_id,
-                                                         'hit_id',
-                                                         taxDB),
-                                                taxRank,value='ScientificName'))),]

@@ -4,16 +4,6 @@
 #' @importFrom plyr desc
 NULL
 
-#' check ranks of taxon(s) against reference
-#' 
-#' @param x taxon object
-#' @param ranks character vector of taxonomical ranks
-#' 
-#' @return \code{TRUE/FALSE}
-#' 
-#' @rdname has_ranks
-#' @export
-setGeneric("has_ranks", function (x, ranks, ...) standardGeneric("has_ranks"))
 setMethod("has_ranks", "Taxon", function (x, ranks) {
   any(getRank(getLineage(x)) %in% ranks)
 })
@@ -54,16 +44,13 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
 }
 
 
-#'@keywords internal
-# recursive walk through the taxonomy tree until taxon has a valid rank
-setGeneric('.resolveNoRank', function(taxon, taxonDB, ...) standardGeneric('.resolveNoRank'))
 setMethod('.resolveNoRank', 'Taxon',
           function (taxon, taxonDB) {
             if (getRank(taxon) != 'no rank') {
               return (taxon)
             }
             else {
-              Recall(taxonDB(getParentTaxId(taxon), taxonDB), taxonDB)
+              Recall(taxonDB(getParentTaxID(taxon), taxonDB), taxonDB)
             } 
           })
 setMethod('.resolveNoRank', 'TaxonList',
@@ -98,23 +85,23 @@ KronaTable <- function() {
 
 #'@keywords internal
 .getterConstructor <- function(SELECT, FROM, ..., as = 'character') {
-  function (x, id, typ) {
+  function (x, id, type) {
     args <- list(...)
-    assert_that(typ %in% c('tax_id', 'query_id', 'hit_id'))
+    type <- match.arg(type, c("tax_id", "query_id", "hit_id"))
     stmts <- trim(paste("SELECT", SELECT, 'FROM', FROM,
                         if (is.null(args$WHERE)) {
-                          paste('WHERE', typ, '=', id)
+                          paste('WHERE', type, '=', id)
                         } else {
                           paste('WHERE', args$WHERE,'=')
                         },
                         if (!is.null(args$VAL) && !is.null(args$TABLE)) {
                           paste('(SELECT', args$VAL, 'FROM', args$TABLE,
-                                'WHERE', typ, '=', id,')')
+                                'WHERE', type, '=', id,')')
                         }))
     AS <- match.fun(paste0('as.', as))
     lapply(stmts, function(stmt) {
-                AS( db_query(x, stmt,1L) %||% NA_character_ )
-            })
+      AS( db_query(x, stmt,1L) %||% NA_character_ )
+    })
   }
 }
 
