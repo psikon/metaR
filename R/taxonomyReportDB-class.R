@@ -100,11 +100,8 @@ setClass('taxonomyReportDB', contains='blastReportDB',validity=.valid.taxonomyRe
 #' @rdname taxonomyReportDB-class
 setMethod('show', 'taxonomyReportDB',
           function (object) {
-            n <- 
-            showme <- sprintf('%s object with: %s querys
-                               %s hits
-                               %s hsps
-                               %s taxonomies',
+            showme <- sprintf('%s object with:
+                              | %s querys | %s hits | %s hsps | %s taxonomies |',
                               sQuote(class(object)), 
                               db_count(object, "query"),
                               db_count(object, "hit"),

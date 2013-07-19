@@ -98,7 +98,7 @@ setMethod("getRank", "taxonomyReportDB", function (x, id, typ) {
 setGeneric('getTaxon', function(x, ...) standardGeneric('getTaxon'))
 
 setMethod('getTaxon','taxonomyReportDB', function (x, id, typ, taxon_db) {
-  taxonDB(getTaxId(x, id, typ), taxon_db[[1]])
+  taxonDB(getTaxId(x, id, typ), taxon_db[['taxon_db']])
 })
 
 #'getLineage
