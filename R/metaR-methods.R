@@ -1,18 +1,3 @@
-# metaCVReport============================
-#
-#'import a metaCV .res file
-#'
-#'@description Import the Results of the .res File from MetaCV to a R and creates an 
-#' metaCVReport object
-#' 
-#' @param path path to the resulting .res File from metaCV
-#' 
-#' @rdname MetaCVReport-methods
-#' @export
-setGeneric("metaCVReport", 
-           function (path) 
-             standardGeneric("metaCVReport"))
-
 setMethod("metaCVReport", signature='character',
           function (path) {
             res <- scan(path, quiet=TRUE,
@@ -27,18 +12,7 @@ setMethod("metaCVReport", signature='character',
           })
 
 
-# taxonCount============================
-#
-#'count taxons of MetaCV
-#'
-#'@description creates a df, that contains the counts ordered by taxIds and the 
-#' corresponding taxName
-#' 
-#' @param x A metaCVReport object.
-#' 
-#' @rdname MetaCVReport-methods
-#' @export
-setGeneric("taxonCount", function(x, ...) standardGeneric("taxonCount"))
+
 
 setMethod("taxonCount", "metaCVReport",
           function (x) {
