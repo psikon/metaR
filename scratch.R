@@ -17,8 +17,12 @@ db_df <- assignTaxon(1:1000,
                      taxon_db = taxDB)
 
 # alles in ein neues Objekt umschichten
-taxReport <- createTaxonomyReportDB('taxonomy', blastReport, db_df, 0.98)
+taxReport <- createTaxonomyReportDB('taxonomy.db', blastReport, db_df, 0.98)
+bacterial <- selectByRank(taxReport,taxRank="superkingdom",'bacteria',taxDB)
+bac <- createTaxonomyReportDB('bacteria.db',blastReport,bacterial,0.98)
 taxReport
+bac
+
 
 
 ###TODO
@@ -103,7 +107,7 @@ getHitLen(taxReport,5,'hit_id')
 getHitLen(taxReport,18,'query_id')
 
 # hsp table
-getHspId(taxReport,38293,'tax_id')
+getHspId(taxReport,94232,'tax_id')
 getHspId(taxReport,5,'hit_id')
 getHspId(taxReport,18,'query_id')
 
@@ -111,9 +115,9 @@ getHspNum(taxReport,94232,'tax_id')
 getHspNum(taxReport,5,'hit_id')
 getHspNum(taxReport,18,'query_id')
 
-getBitScore(taxReport,94232,'tax_id')
-getBitScore(taxReport,5,'hit_id')
-getBitScore(taxReport,18,'query_id')
+getBitscore(taxReport,94232,'tax_id')
+getBitscore(taxReport,5,'hit_id')
+getBitscore(taxReport,18,'query_id')
 
 getScore(taxReport,94232,'tax_id')
 getScore(taxReport,5,'hit_id')
@@ -171,8 +175,15 @@ getHitSeq(taxReport,94232,'tax_id')
 getHitSeq(taxReport,5,'hit_id')
 getHitSeq(taxReport,18,'query_id')
 
-getMidline(taxReport,94232,'tax_id')
-getMidline(taxReport,5,'hit_id')
-getMidline(taxReport,18,'query_id')
+getMatch(taxReport,94232,'tax_id')
+getMatch(taxReport,5,'hit_id')
+getMatch(taxReport,18,'query_id')
 
-
+metaCV <- importMetaCV('../metacv.test.res')
+getQueryDef(metaCV,2)
+getScore(metaCV,2)
+getScientificName(metaCV,2)
+getKeggId(metaCV,2)
+getCogId(metaCV,2)
+getTaxId(metaCV,2)
+getGeneId(metaCV,2)

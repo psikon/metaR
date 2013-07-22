@@ -1,6 +1,5 @@
 #'@importFrom ncbi taxonByGeneID
 #'@importFrom ncbi getByRank
-#'@importFrom ncbi getTaxID
 #'@importFrom iterators iter
 #'@importFrom iterators nextElem
 #'@importFrom assertthat '%has_name%'
@@ -79,7 +78,7 @@ LCA <- function(query_table,
     taxa <- taxa[valid]
     # determine the linage and unique TaxId(s)
     lineage <- getLineage(taxa)
-    taxids <- unique(getTaxID(taxa))
+    taxids <- unique(getTaxId(taxa))
     while (length(taxids) > 1 || all(is.na(taxids))) {
       # traverse through the ranks until all TaxId(s) are unique
       taxids <- unique(getByRank(lineage, nextElem(rankIt), 'TaxId'))
