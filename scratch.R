@@ -1,5 +1,5 @@
 require(metaR)
-
+Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
 ## doku compelieren
 library(devtools)
 document(pkg=".",clean=T)
@@ -10,7 +10,7 @@ taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/progr
 #taxDB <- connectTaxonDB("../")
 
 # taxonomy data.frame erstellen
-db_df <- assignTaxon(1:1000, 
+db_df <- assignTaxon(1:30000, 
                      taxRanks = c("species", "genus", "tribe", "family", "order",
                                   "class", "phylum", "kingdom", "superkingdom"),
                      blast_db = blastReport, 
@@ -18,19 +18,25 @@ db_df <- assignTaxon(1:1000,
 
 # alles in ein neues Objekt umschichten
 taxReport <- createTaxonomyReportDB('taxonomy.db', blastReport, db_df, 0.98)
+# nur Prokaryoten raussuchen
 bacterial <- selectByRank(taxReport,taxRank="superkingdom",'bacteria',taxDB)
-bac <- createTaxonomyReportDB('bacteria.db',blastReport,bacterial,0.98)
-taxReport
-bac
+blast <- createTaxonomyReportDB('bacteria.db',blastReport,bacterial,0.98)
+blast
+
+# metaCV importieren
+metacv <- importMetaCV('/home/psehnert/daten/metagenomics/sample64/metacv/metpipe.res')
+metacv <- selectByScore(metacv,8)
+metacv
 
 
-
-###TODO
 
 # getByRank wrapper integrieren
-# selection
 
-# getter Tester
+####################################
+# taxonomyReportDB - getter Tester #
+####################################
+
+#taxonomy
 getQueryId(taxReport,94232,'tax_id')
 getQueryId(taxReport,5,'hit_id')
 getQueryId(taxReport,18,'query_id')
@@ -59,6 +65,7 @@ getRank(taxReport,94232,'tax_id')
 getRank(taxReport,5,'hit_id')
 getRank(taxReport,18,'query_id')
 
+# ncbi wrapper
 getTaxon(taxReport,94232,'tax_id',taxDB)
 getTaxon(taxReport,5,'hit_id',taxDB)
 getTaxon(taxReport,18,'query_id',taxDB)
@@ -84,7 +91,6 @@ getParentTaxId(taxReport,18,'query_id',taxDB)
 #getByRank(taxReport,18,'query_id','phylum',taxDB)
 
 # query table 
-
 getQueryDef(taxReport,38293,'tax_id')
 getQueryDef(taxReport,79,'hit_id')
 getQueryDef(taxReport,153,'query_id')
@@ -178,6 +184,10 @@ getHitSeq(taxReport,18,'query_id')
 getMatch(taxReport,94232,'tax_id')
 getMatch(taxReport,5,'hit_id')
 getMatch(taxReport,18,'query_id')
+
+################################
+# metaCVReport - getter Tester #
+################################
 
 metaCV <- importMetaCV('../metacv.test.res')
 getQueryDef(metaCV,2)

@@ -53,7 +53,8 @@ LCA <- function(query_table,
   taxa <- taxonByGeneID(query_table[["gene_id"]], geneid_db, taxon_db)
   # Condition 1: when the taxa have multiple TaxId(s) at the superkingdom 
   # rank discard this query number and go to the next
-  if (nunique(getByRank(taxa, topRank, 'TaxId')) > 1) {
+  if (nunique(getByRank(taxa, topRank, 'TaxId')) > 1 || 
+        all(getByRank(taxa, topRank, 'TaxId') %in% NA_character_)) {
     return(NULL)
   }
   # create an iterator for the ranks
