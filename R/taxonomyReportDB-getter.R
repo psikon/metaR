@@ -110,7 +110,7 @@ setMethod("getAccession", "taxonomyReportDB", function (x, id, type) {
 #'@rdname taxonomyReportDB-getter
 #'@export
 setMethod("getQueryDef", "taxonomyReportDB", function (x, id, type) {
-  unlist(.getQueryDef(x, getQueryId(x, id, type ), 'query_id'))
+  unlist(.getQueryDef(x, getQueryID(x, id, type ), 'query_id'))
 })
 
 
@@ -150,7 +150,7 @@ setMethod("getDefinition", "taxonomyReportDB", function (x, id, type) {
 #'@rdname taxonomyReportDB-getter
 #'@export
 setMethod("getHitLen", "taxonomyReportDB", function (x, id, type) {
-  unlist(.getHitLen(x, getHitId(x, id, type), 'hit_id'))
+  unlist(.getHitLen(x, getHitID(x, id, type), 'hit_id'))
 })
 
 .getHspID <- .getterConstructor('hsp_id', 'hsp', WHERE = 'hit_id',

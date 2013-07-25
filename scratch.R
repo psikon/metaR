@@ -29,6 +29,7 @@ blast
 metacv <- importMetaCV('/home/psehnert/daten/metagenomics/sample64/metacv/metpipe.res')
 metacv <- selectByScore(metacv,8)
 metacv
+cmp <- compareMetaCVwithBlast(blast,metacv,taxDB)
 
 
 
@@ -38,6 +39,8 @@ metacv
 # taxonomyReportDB - getter Tester #
 ####################################
 
+countTaxa(taxReport)
+countTaxa(taxReport,2)
 #taxonomy
 getQueryID(taxReport,94232,'tax_id')
 getQueryID(taxReport,5,'hit_id')
@@ -188,6 +191,10 @@ getMatch(taxReport,18,'query_id')
 ################################
 
 metaCV <- importMetaCV('../metacv.test.res')
+
+countTaxa(metaCV,2)
+countTaxa(metaCV)
+
 getQueryDef(metaCV,2)
 getScore(metaCV,2)
 getScientificName(metaCV,2)

@@ -46,11 +46,11 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
 
 setMethod('.resolveNoRank', 'Taxon',
           function (taxon, taxonDB) {
-            if (getRank(taxon) != 'no rank') {
+            if (ncbi::getRank(taxon) != 'no rank') {
               return (taxon)
             }
             else {
-              Recall(taxonDB(getParentTaxID(taxon), taxonDB), taxonDB)
+              Recall(taxonDB(ncbi::getParentTaxID(taxon), taxonDB[['taxon_db']]), taxonDB)
             } 
           })
 setMethod('.resolveNoRank', 'TaxonList',

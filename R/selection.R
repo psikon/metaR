@@ -10,15 +10,19 @@
 #'
 #'@return data.frame
 #'
-#'@rdname selectByRank.Rd
+#'@rdname selectByRank
 #'@export
 selectByRank <- function(x, taxRank, classifier, taxon_db) {
+  # check for valid taxRanks
   if (!taxRank %in% ncbi:::.ranks) {
     stop("'taxRank' must be one of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
   }
+  # create a TaxonList with all hit(s) in hit table
   hit_id <- db_query(x, "SELECT hit_id FROM taxonomy", 1L)
   taxa <- getTaxon(x=taxReport, id=hit_id, typ='hit_id', taxon_db=taxDB)
+  # search for hit_id(s) matching the classifier
   id <- hit_id[which(tolower(getByRank(taxa, taxRank, value='ScientificName')) == tolower(classifier))]
+  # create a data.frame with them
   do.call('rbind', lapply(id, function(i) db_query(x, paste('SELECT * FROM taxonomy WHERE hit_id =', i))))
 }
 
@@ -47,7 +51,7 @@ selectByRank <- function(x, taxRank, classifier, taxon_db) {
 #'@param x metaCVReport object
 #'@param score 
 #'
-#'@return data.frame
+#'@return metaCVReport
 # 
 #'@rdname selectByScore
 #'@export

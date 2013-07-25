@@ -1,77 +1,58 @@
-NULL
-# compareMetaCVwithBlast <- function(taxonomyReportDB,metaCVReport,taxonDB) {
-#   query_id <- db_query(blast,"SELECT query_id from query",1L)
-#   metaCVReport_defs <- metaCVReport[['query_def']]
-#   cmp <- as.data.frame(do.call(rbind,lapply(query_id,function(x){
-#     taxonomyReport_def <-  getQueryDef(blast,x,'query_id')
-#     meta <- metaCVReport[which(all(gsub(" .*$", "", taxonomyReport_def) %in% metaCVReport_defs)),]
-#     if(nrow(meta) >= 1) {
-#       cbind(taxonomyReport_def,meta$tax_id)
-#     } else {
-#       NULL
-#     }
-#   })))
-# }
-# 
-# 
-# 
-# 
-# test <- metacv[which(metacv$query_def %in% getQueryDef(blast,query_id,'query_id')),]
-# meta_defs <- metacv$query_def
-# blast_defs <- getQueryDef(blast,query_id,'query_id')
-# blast_tax <- getTaxID(blast,query_id,'query_id')
-# 
-# t <- as.data.frame(do.call(rbind,lapply(query_id, function(x){
-#   
-#   def <- getQueryDef(blast,x,'query_id')
-#   if(all(gsub(" .*$", "", def) %in% meta_defs)) {
-#     meta <- metacv[which(metacv$query_def %in% gsub(" .*$", "", def)),]
-#     meta <- meta[,-c(2,3,4,5)]
-#     meta <- cbind(meta,meta_class=getByRank(taxonDB(meta$tax_id,taxDB[[1]]),
-#                                             'class',
-#                                             value='ScientificName'))
-#     blast_entries <- cbind(blast_def=def,
-#                            blast_query=x,
-#                            blast_taxid=getTaxID(blast,x,'query_id'),
-#                            blast_rank=getRank(blast,x,'query_id'),
-#                            blast_class=getByRank(taxonDB(getTaxID(blast,x,'query_id'),
-#                                                          taxDB[[1]]),
-#                                                  'class',value='ScientificName'))
-#     tmp <- cbind(meta,blast_entries)
-#   } else {
-#     NULL
-#   }
-# })))
-# # setMethod("taxonCount", "metaCVReport",
-# #           function (x) {
-# #             # count the taxIds
-# #             count <- tapply(x[,"taxID"], list(x[,"taxID"]), length)
-# #             # get the names and merge them with the original object
-# #             taxID <- names(count)
-# #             tmp <- unique(merge(list(taxID = as.integer(taxID)), x[,c("taxID", "taxName")]))
-# #             # fix rownames
-# #             rownames(tmp) <- NULL
-# #             cbind(tmp, count = unname(count))
-# #           })
-# # 
-# # # mergeMetaCVwithBlast============================
-# # #
-# # #' merge MetaCV with Blast results
-# # #'
-# # #' compare the results of a MetaCVReport object with the results of a 
-# # #' BlastReportDB object to find hits contained in both of them
-# # #' 
-# # #' @param metaCVReport A metaCVReport object.
-# # #' @param blastReportDB blastReportDB
-# # #' 
-# # #' @rdname MetaCVReport-methods
-# # #' @export
-# # mergeMetaCVwithBlast <- function(metaCVReport,blastReportDB) {
-# #   print("vergleicht die GeneIDs von MetaCV mit den Ergebnissen von Blast")
-# #   
-# #   
-# #   # vergleiche die gene ids und die tax ids zwischen den beiden datensätzen 
-# #   # füge eine extra spalte ein welches programm dieses fund gemacht hat
-# #   # blastn - metacv - beide
-# #   
-# # }
+#' find similarities between Blast and MetaCV results
+#' 
+#' @description The results of the two programms will be analyised by \code{tax_id}, 
+#' \code{rank} and \code{scientific_name}, basing on the \code{query_def} field 
+#' 
+#' @param taxonomyReportDB
+#' @param metaCVReport
+#' @param taxonDB  connection to taxonomy DB
+#' 
+#' @return data.frame
+#' 
+#' @rdname compare MetaCVwithBlast
+#' @export
+compareMetaCVwithBlast <- function(taxonomyReportDB, metaCVReport, taxonDB) {
+  # extract query_id(s) for lapply
+  query_id <- db_query(taxonomyReportDB, "SELECT query_id from query", 1L)
+  cmp <- as.data.frame(do.call(rbind, lapply(query_id, function(x) {
+    # get the actual query_def
+    taxonomyReport_def <-  gsub(" .*$", "", getQueryDef(taxonomyReportDB, x, 'query_id'))
+    # find occurance index in metaCVReport
+    idx <- which(metaCVReport[['query_def']] %in% taxonomyReport_def)
+    if (length(idx) > 0) {
+      # adjust the metaCVReport taxon to the used parameters and create data.frame 
+      metaTaxon <- .resolveNoRank(taxonDB(metaCVReport[idx, 'tax_id'], taxDB$taxon_db), taxonDB)
+      cbind(query_dev = metaCVReport[idx, 'query_def'],
+            metaCV_tax_id = getTaxID(metaTaxon),
+            metaCV_scientific_name = getScientificName(metaTaxon),
+            metaCV_rank = getRank(metaTaxon),
+            blast_tax_id = getTaxID(taxonomyReportDB, x, 'query_id'),
+            blast_scientific_name = getScientificName(taxonomyReportDB, x, 'query_id'),
+            blast_rank = getRank(taxonomyReportDB, x, 'query_id'))
+    }
+  })))
+}
+
+setMethod('countTaxa', 'metaCVReport', function(x, id = NULL) {
+  if (is.null(id)) {
+    df <- ddply(x, .(tax_id), summarise, count = length(tax_id))
+  } else {
+    df <- ddply(x[which(x['tax_id'] == id),], .(tax_id), summarise, count = length(tax_id))
+  }
+  df
+})
+
+setMethod('countTaxa', 'taxonomyReportDB', function(x, id = NULL){
+  if (is.null(id)) {
+    df <- as.data.frame(db_query(x,
+                                 "SELECT tax_id, COUNT(tax_id) FROM taxonomy GROUP by tax_id"))
+    colnames(df) <- c('tax_id', 'count')
+  } else {
+    df <- as.data.frame(db_query(x, 
+                                 paste("SELECT tax_id, COUNT(tax_id) 
+                                       FROM taxonomy WHERE tax_id =", id,
+                                       "GROUP BY tax_id")))
+    colnames(df)<- c('tax_id', 'count')                    
+  }
+  df
+})

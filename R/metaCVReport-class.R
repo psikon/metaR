@@ -33,6 +33,8 @@ setMethod("show","metaCVReport",
             cat(showme, sep="\n")
           })
 
+#'@param path
+#'
 #'@rdname metaCVReport-class
 #'@export
 importMetaCV <- function(path) {

@@ -1,18 +1,3 @@
-# taxonCount============================
-# 
-# ' Count taxa of MetaCV
-# '
-# ' @description creates a code{data.frame}, that contains the counts ordered by taxId(s) and the 
-# ' corresponding taxName
-# ' 
-# ' @param x A metaCVReport object.
-# ' 
-# ' @rdname MetaCVReport-methods
-# ' @export
-# setGeneric("taxonCount", function(x, ...) standardGeneric("taxonCount"))
-# 
-# 
-
 #' check ranks of taxon(s) against reference
 #' 
 #'@param x taxon object
@@ -57,7 +42,20 @@ setGeneric("getKeggID", function (x, ...) standardGeneric("getKeggID"))
 setGeneric("getCogID", function (x, ...) standardGeneric("getCogID"))
 # internals --------------------------------------------------------------
 
-
 #'@keywords internal
 # recursive walk through the taxonomy tree until taxon has a valid rank
 setGeneric('.resolveNoRank', function(taxon, taxonDB, ...) standardGeneric('.resolveNoRank'))
+
+#'count he number of occurences of \code{tax_id(s)} 
+#'
+#'@description count the number of occureneces of \code{tax_id(s)} and
+#'return a data.frame containing the \code{tax_id(s)} and their frequencies
+#'
+#'@param x metaCVReport or taxonomyReportDB
+#'@param id \code{tax_id}
+#'
+#'@return data.frame
+#'
+#'@rdname countTaxa
+#'@export
+setGeneric('countTaxa',function(x, ...) standardGeneric('countTaxa'))
