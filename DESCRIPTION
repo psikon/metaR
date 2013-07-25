@@ -34,4 +34,4 @@ Collate:
     'selection.R'
     'metaCVReport-class.R'
     'metaCVReport-getter.R'
-    'metaR-methods.R'
+    'metaCVReport-methods.R'

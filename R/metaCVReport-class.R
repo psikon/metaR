@@ -3,13 +3,15 @@
 #' metaCVReport is an S4 class that provides a container for data retrieved
 #' from the .res outputfile of metaCV
 #' 
-#' metaCVReport objects have 5 slots:
+#' metaCVReport objects have 7 slots:
 #' \itemize{
-#'   \item{read_name}{Name of the Read in Input File}
-#'   \item{score}{Score of the detection with MetaCV}
-#'   \item{geneID}{ID for NCBI database}
-#'   \item{taxID}{ID for NCBI Taxonomy database}
-#'   \item{taxname}{Name in NCBI Taxonomy database}
+#'   \item  query_def       name of read in input file
+#'   \item  score           score of the detection with MetaCV
+#'   \item  kegg_id         identifier for KEGG Pathway
+#'   \item  cog_id          identifier for ?
+#'   \item  gene_id         identifier for NCBI sequence database
+#'   \item  tax_id          identifier for NCBI taxonomy database
+#'   \item  scientific_name name in NCBI taxonomy database
 #'   
 #' }
 #' 

@@ -1,4 +1,3 @@
-
 #'Getter for metaCVReport
 #'
 #'@param x  \code{metaCVReport} object
@@ -19,25 +18,25 @@ setMethod("getScore", 'metaCVReport', function(x, id) {
 
 #' @rdname metaCVReport-getter.rd
 #' @export
-setMethod("getGeneId", 'metaCVReport', function(x, id) {
+setMethod("getGeneID", 'metaCVReport', function(x, id) {
   x[['gene_id']][which(metaCV[['tax_id']] == id)]
 })
 
 #' @rdname metaCVReport-getter.rd
 #' @export
-setMethod("getKeggId", 'metaCVReport', function(x, id) {
+setMethod("getKeggID", 'metaCVReport', function(x, id) {
   x[['kegg_id']][which(metaCV[['tax_id']] == id)]
 })
 
 #' @rdname metaCVReport-getter.rd
 #' @export
-setMethod("getCogId", 'metaCVReport', function(x, id) {
+setMethod("getCogID", 'metaCVReport', function(x, id) {
   x[['cog_id']][which(metaCV[['tax_id']] == id)]
 })
 
 #' @rdname metaCVReport-getter.rd
 #' @export
-setMethod("getTaxId", 'metaCVReport', function(x, id) {
+setMethod("getTaxID", 'metaCVReport', function(x, id) {
   x[['tax_id']][which(metaCV[['tax_id']] == id)]
 })
 

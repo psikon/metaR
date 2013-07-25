@@ -2,7 +2,7 @@
 # 
 # ' Count taxa of MetaCV
 # '
-# ' @description creates a code{data.frame}, that contains the counts ordered by taxIds and the 
+# ' @description creates a code{data.frame}, that contains the counts ordered by taxId(s) and the 
 # ' corresponding taxName
 # ' 
 # ' @param x A metaCVReport object.
@@ -26,23 +26,23 @@ setGeneric("has_ranks", function (x, ranks, ...) standardGeneric("has_ranks"))
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setGeneric("getQueryId", function (x, ...) standardGeneric("getQueryId"))
+setGeneric("getQueryID", function (x, ...) standardGeneric("getQueryID"))
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setGeneric("getHitId", function (x, ...) standardGeneric("getHitId"))
+setGeneric("getHitID", function (x, ...) standardGeneric("getHitID"))
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setGeneric("getHspId", function (x, ...) standardGeneric("getHspId"))
+setGeneric("getHspID", function (x, ...) standardGeneric("getHspID"))
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setGeneric("getGeneId", function (x, ...) standardGeneric("getGeneId"))
+setGeneric("getGeneID", function (x, ...) standardGeneric("getGeneID"))
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setGeneric("getHspId", function (x, ...) standardGeneric("getHspId"))
+setGeneric("getHspID", function (x, ...) standardGeneric("getHspID"))
 
 #'@rdname taxonomyReportDB-getter
 #'@export
@@ -52,9 +52,9 @@ setGeneric("getTaxon", function (x, ...) standardGeneric("getTaxon"))
 #'@export
 setGeneric("getDefinition", function (x, ...) standardGeneric("getDefinition"))
 
-setGeneric("getKeggId", function (x, ...) standardGeneric("getKeggId"))
+setGeneric("getKeggID", function (x, ...) standardGeneric("getKeggID"))
 
-setGeneric("getCogId", function (x, ...) standardGeneric("getCogId"))
+setGeneric("getCogID", function (x, ...) standardGeneric("getCogID"))
 # internals --------------------------------------------------------------
 
 

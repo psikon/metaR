@@ -41,7 +41,8 @@ LCA <- function(query_table,
               query_table %has_name% 'accession')
   # check the ranks for valid ncbi rank designations
   if (!all(taxRanks %in% ncbi:::.ranks)) {
-    stop("'taxRanks' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
+    stop("'taxRanks' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], 
+                                          collapse=', '))
   }
   #sort the ranks in ascending order,e.g.  from species to superkingdom
   taxRanks <- names(rev(sort(sapply(taxRanks, match, ncbi:::.ranks))))
@@ -79,7 +80,7 @@ LCA <- function(query_table,
     taxa <- taxa[valid]
     # determine the linage and unique TaxId(s)
     lineage <- getLineage(taxa)
-    taxids <- unique(getTaxId(taxa))
+    taxids <- unique(getTaxID(taxa))
     while (length(taxids) > 1 || all(is.na(taxids))) {
       # traverse through the ranks until all TaxId(s) are unique
       taxids <- unique(getByRank(lineage, nextElem(rankIt), 'TaxId'))
