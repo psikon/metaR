@@ -56,7 +56,6 @@ assignTaxon <- function (query_id,
                           taxon_db)
 {
   # filter hits for query coverage
-  print(query_id)
   coverage_threshold_idx <- which(getQueryCoverage(blast_db, query_id) >= coverage_threshold)
   candidate_hits <- .getHit(blast_db, query_id)[coverage_threshold_idx, ]
   if (nrow(candidate_hits) >= 1) {

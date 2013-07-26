@@ -26,7 +26,7 @@ taxonomy_create.sql <- 'CREATE TABLE taxonomy(
 #' Create or connect a local install of NCBI Taxonomy database
 #'
 #'@description Create, update or connect to a local installation of the NCBI 
-#'             Taxonomy Database. The Connection objectis returned as a list 
+#'             Taxonomy Database. The Connection object is returned as a list 
 #'             of connections to \code{'taxon.db'} and \code{'geneid.db'}. 
 #'
 #'@param path_to_db parent directory for the taxonomy db

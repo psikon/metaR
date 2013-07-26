@@ -21,9 +21,9 @@ db_df <- assignTaxon(1:30000,
 # alles in ein neues Objekt umschichten
 taxReport <- createTaxonomyReportDB('taxonomy.db', blastReport, db_df, 0.98)
 # nur Prokaryoten raussuchen
-bacterial <- selectByRank(taxReport,taxRank="superkingdom",'bacteria',taxDB)
-blast <- createTaxonomyReportDB('bacteria.db',blastReport,bacterial,0.98)
-blast
+eukaryota <- selectByRank(taxReport,taxRank="superkingdom",'eukaryota',taxDB)
+eukaryota <- createTaxonomyReportDB('eukaryota.db',blastReport,eukaryota,0.98)
+eukaryota
 
 # metaCV importieren
 metacv <- importMetaCV('/home/psehnert/daten/metagenomics/sample64/metacv/metpipe.res')

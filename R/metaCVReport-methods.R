@@ -9,7 +9,7 @@
 #' 
 #' @return data.frame
 #' 
-#' @rdname compare MetaCVwithBlast
+#' @rdname compareMetaCVwithBlast
 #' @export
 compareMetaCVwithBlast <- function(taxonomyReportDB, metaCVReport, taxonDB) {
   # extract query_id(s) for lapply
