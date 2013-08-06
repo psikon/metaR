@@ -56,6 +56,7 @@ assignTaxon <- function (query_id,
                           taxon_db)
 {
   # filter hits for query coverage
+  print(query_id)
   coverage_threshold_idx <- which(getQueryCoverage(blast_db, query_id) >= coverage_threshold)
   candidate_hits <- .getHit(blast_db, query_id)[coverage_threshold_idx, ]
   if (nrow(candidate_hits) >= 1) {
@@ -68,7 +69,11 @@ assignTaxon <- function (query_id,
     # reset row numbers
     row.names(candidate_hits) <- NULL
     # find the least common ancestor
-    LCA(query_table=candidate_hits, taxon_db, taxRanks)
+    if (nrow(candidate_hits)!=0) {
+      LCA(query_table=candidate_hits, taxon_db, taxRanks)
+    } else {
+      NULL
+    } 
   } else {
     NULL
   }

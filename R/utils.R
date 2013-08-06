@@ -78,7 +78,6 @@ setAs("TaxonList", "data.frame", function (from) {
 #'
 #'@export
 
-
 KronaTable <- function() {
   print("create input file for krona webtools")  
 }

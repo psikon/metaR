@@ -74,6 +74,7 @@ createTable <- function (db, tbl, tbl_scheme) {
 #'@rdname db-functions
 #'@export
 updateTable <- function (db, tbl, df) {
+  # struktur überprüfen
   db_bulk_insert(db, tbl, df)
 }
 

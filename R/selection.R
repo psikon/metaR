@@ -19,7 +19,7 @@ selectByRank <- function(x, taxRank, classifier, taxon_db) {
   }
   # create a TaxonList with all hit(s) in hit table
   hit_id <- db_query(x, "SELECT hit_id FROM taxonomy", 1L)
-  taxa <- getTaxon(x=taxReport, id=hit_id, typ='hit_id', taxon_db=taxDB)
+  taxa <- getTaxon(x, id=hit_id, typ='hit_id', taxon_db)
   # search for hit_id(s) matching the classifier
   id <- hit_id[which(tolower(getByRank(taxa, taxRank, value='ScientificName')) == tolower(classifier))]
   # create a data.frame with them

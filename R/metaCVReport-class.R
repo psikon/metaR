@@ -23,6 +23,7 @@
 #' @aliases show,metaCVReport-method
 setOldClass('data.frame')
 setClass("metaCVReport", contains="data.frame")
+#validität hinzufügen
 
 # specialized show Method for metaCVReport object
 setMethod("show","metaCVReport",

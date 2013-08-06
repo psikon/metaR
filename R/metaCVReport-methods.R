@@ -22,7 +22,7 @@ compareMetaCVwithBlast <- function(taxonomyReportDB, metaCVReport, taxonDB) {
     if (length(idx) > 0) {
       # adjust the metaCVReport taxon to the used parameters and create data.frame 
       metaTaxon <- .resolveNoRank(taxonDB(metaCVReport[idx, 'tax_id'], taxDB$taxon_db), taxonDB)
-      cbind(query_dev = metaCVReport[idx, 'query_def'],
+      cbind(query_def = metaCVReport[idx, 'query_def'],
             metaCV_tax_id = getTaxID(metaTaxon),
             metaCV_scientific_name = getScientificName(metaTaxon),
             metaCV_rank = getRank(metaTaxon),
