@@ -11,12 +11,13 @@ blastReport <- blastReportDBConnect("../blast.test.db")
 taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/program/db")
 #taxDB <- connectTaxonDB("../")
 
+
 # taxonomy data.frame erstellen
-db_df <- assignTaxon(1:30000, 
-                     taxRanks = c("species", "genus", "tribe", "family", "order",
+db_df <- assignTaxon(1:10000, 
+                    taxRanks = c("species", "genus", "tribe", "family", "order",
                                   "class", "phylum", "kingdom", "superkingdom"),
-                     blast_db = blastReport, 
-                     taxon_db = taxDB)
+                    blast_db = blastReport, 
+                    taxon_db = taxDB)
 
 # alles in ein neues Objekt umschichten
 taxReport <- createTaxonomyReportDB('taxonomy.db', blastReport, db_df, 0.98)
@@ -31,7 +32,10 @@ metacv <- selectByScore(metacv,8)
 metacv
 cmp <- compareMetaCVwithBlast(blast,metacv,taxDB)
 
-
+# krona webtools
+createKronaFile(taxReport, "krona-test.txt")
+runKronaWebtools(input="krona-test.txt",output="krona-output.html",
+                 program_path="/home/psehnert/daten/metagenomics/scripts/metpipe/programs/krona/")
 
 # getByRank wrapper integrieren
 

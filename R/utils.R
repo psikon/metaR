@@ -68,20 +68,6 @@ setAs("TaxonList", "data.frame", function (from) {
   do.call('rbind', lapply(from, as, Class='data.frame'))
 })
 
-#' classify tax_id(s) by taxRanks
-#'
-#'@param df data.frame for classification
-#'@param taxRank valid rank from ncbi taxonomy
-#'@param taxon_db connection object to taxonomy db
-#'
-#'@return x
-#'
-#'@export
-
-KronaTable <- function() {
-  print("create input file for krona webtools")  
-}
-
 #'@keywords internal
 .getterConstructor <- function(SELECT, FROM, ..., as = 'character') {
   function (x, id, type) {

@@ -22,6 +22,7 @@
 #'@importFrom rmisc compact
 #'@importFrom blastr getQueryCoverage
 #'@importFrom blastr getHitID
+#'@importFrom plyr llply
 #'
 #'@seealso \code{\link{LCA}}
 #'
@@ -38,9 +39,9 @@ assignTaxon <- function (query_id,
                          taxon_db)
 {
   # make the function accessable for 1:n query_id(s)
-  ans <- lapply(query_id, .assignTaxon, bitscore_tolerance = bitscore_tolerance,
+  ans <- llply(query_id, .assignTaxon, bitscore_tolerance = bitscore_tolerance,
                 coverage_threshold = coverage_threshold, taxRanks = taxRanks, 
-                blast_db = blast_db, taxon_db = taxon_db)
+                blast_db = blast_db, taxon_db = taxon_db,.progress = "text")
   # remove entries with NA
   ans <- compact(ans)
   # convert to data.frame
@@ -56,7 +57,6 @@ assignTaxon <- function (query_id,
                           taxon_db)
 {
   # filter hits for query coverage
-  print(query_id)
   coverage_threshold_idx <- which(getQueryCoverage(blast_db, query_id) >= coverage_threshold)
   candidate_hits <- .getHit(blast_db, query_id)[coverage_threshold_idx, ]
   if (nrow(candidate_hits) >= 1) {

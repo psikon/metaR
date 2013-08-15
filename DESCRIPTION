@@ -35,3 +35,4 @@ Collate:
     'metaCVReport-class.R'
     'metaCVReport-getter.R'
     'metaCVReport-methods.R'
+    'krona-functions.R'
