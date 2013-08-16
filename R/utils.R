@@ -12,28 +12,28 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
 })
 
 # returns all hsp(s) matching a specific query_id and hit_id or NA
-.getSelectedHits <- function (x, qid, hid) {
-  stmts <- paste("SELECT * from hsp WHERE query_id=",qid,"AND hit_id=",hid)
-  as.data.frame(do.call(rbind,lapply(stmts, FUN=function(stmt) {
-    db_query(x, stmt) %||% NA_character_ 
+.getSelectedHits <- function (blastReportDB, qid, hid) {
+  stmts <- paste("SELECT * from hsp WHERE query_id=", qid, "AND hit_id=", hid)
+  as.data.frame(do.call(rbind, lapply(stmts, FUN = function(stmt) {
+    db_query(blastReportDB, stmt) %||% NA_character_ 
   })))
 }
 #'@keywords internal
-.getHit <- function (x,id) {
-  db_query(x,paste("SELECT * FROM hit WHERE query_id=",id))
+.getHit <- function (blastReportDB, id) {
+  db_query(blastReportDB , paste("SELECT * FROM hit WHERE query_id=", id))
 }
 #'@keywords internal
-.getHsp <- function (x,id) {
-  db_query(x,paste("SELECT * FROM hsp WHERE query_id=",id))
+.getHsp <- function (blastReportDB,id) {
+  db_query(blastReportDB, paste("SELECT * FROM hsp WHERE query_id=", id))
 }
 #'@keywords internal
 .filterHsp <- function(df, perc) { 
   # get all hsp(s) bit_score >= tolerance threshold
-  df <- df[which(df[ 'bit_score' ] >= max(df[ 'bit_score' ]) * perc),]  
+  df <- df[which(df[ 'bit_score' ] >= max(df[ 'bit_score' ]) * perc), ]  
   # sort them descending by bit_score
   df <- arrange(df, desc(df[ 'bit_score' ]))
   # remove duplicates
-  df <- df[!duplicated(df[ 'hit_id' ]),]
+  df <- df[!duplicated(df[ 'hit_id' ]), ]
   df
 }
 
@@ -45,27 +45,27 @@ setMethod("has_ranks", "TaxonList", function (x, ranks) {
 
 
 setMethod('.resolveNoRank', 'Taxon',
-          function (taxon, taxonDB) {
+          function (taxon, taxon_db) {
             if (ncbi::getRank(taxon) != 'no rank') {
               return (taxon)
             }
             else {
-              Recall(taxonDB(ncbi::getParentTaxID(taxon), taxonDB[['taxon_db']]), taxonDB)
+              Recall(taxonDB(ncbi::getParentTaxID(taxon), taxon_db[['taxon_db']]), taxon_db)
             } 
           })
 setMethod('.resolveNoRank', 'TaxonList',
-          function (taxon, taxonDB) {
-            ncbi:::TaxonList(lapply(taxon, .resolveNoRank, taxonDB = taxonDB))
+          function (taxon, taxon_db) {
+            ncbi:::TaxonList(lapply(taxon, .resolveNoRank, taxon_db = taxon_db))
           })
 
 # extend the setAs frunction to convert taxon in data.frame
 setAs("Taxon", "data.frame", function (from) {
   data.frame(tax_id = from@TaxId, scientific_name = from@ScientificName, rank = from@Rank,
-             check.names=FALSE, stringsAsFactors=FALSE)
+             check.names = FALSE, stringsAsFactors = FALSE)
 })
 
 setAs("TaxonList", "data.frame", function (from) {
-  do.call('rbind', lapply(from, as, Class='data.frame'))
+  do.call('rbind', lapply(from, as, Class = 'data.frame'))
 })
 
 #'@keywords internal
@@ -77,7 +77,7 @@ setAs("TaxonList", "data.frame", function (from) {
                         if (is.null(args$WHERE)) {
                           paste('WHERE', type, '=', id)
                         } else {
-                          paste('WHERE', args$WHERE,'=')
+                          paste('WHERE', args$WHERE, '=')
                         },
                         if (!is.null(args$VAL) && !is.null(args$TABLE)) {
                           paste('(SELECT', args$VAL, 'FROM', args$TABLE,

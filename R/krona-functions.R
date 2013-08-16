@@ -3,24 +3,24 @@
 #'@description creates an tab-separated input file for the text import funtion of the 
 #'Krona Webtools consisting of the the count of taxons and the corresponding linage
 #'
-#'@param taxonomyReport \code{taxonomyReport} object
+#'@param taxonomyReportDB \code{taxonomyReportDB} object
 #'@param output location and name of the output file
 #'
 #'@seealso runKronaWebtools
 #'@export
-createKronaFile <- function(taxonomyReport, output) {
+createKronaFile <- function(taxonomyReportDB, output, taxon_db) {
   # count the occurences of the tax_ids
-  df <- countTaxa(taxonomyReport)
+  df <- countTaxa(taxonomyReportDB)
   # get for every counted tax_id the linage 
-  df <- cbind(df, linage=vapply(df$tax_id, 
+  df <- cbind(df, linage = vapply(df$tax_id, 
                                 function(x) {
                                   paste(unique(taxonDB(as.integer(x),
-                                                       taxDB[[1]])@Lineage@ScientificName),
-                                        collapse="\t")
+                                                       taxon_db[['taxon_db']])@Lineage@ScientificName),
+                                        collapse = "\t")
                                 }, 
                                 "character"))  
   # convert and save the results in a tab separeted file
-  write.table(df[, -1], output, quote=F, sep="\t", row.names=F, col.names=F)
+  write.table(df[, -1], output, quote = F, sep = "\t", row.names = F, col.names = F)
 }
 
 #' run the Krona Webtools from R

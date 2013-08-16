@@ -44,15 +44,17 @@ setGeneric("getCogID", function (x, ...) standardGeneric("getCogID"))
 
 #'@keywords internal
 # recursive walk through the taxonomy tree until taxon has a valid rank
-setGeneric('.resolveNoRank', function(taxon, taxonDB, ...) standardGeneric('.resolveNoRank'))
+setGeneric('.resolveNoRank', function(taxon, taxon_db, ...) standardGeneric('.resolveNoRank'))
 
-#'count he number of occurences of \code{tax_id(s)} 
-#'
-#'@description count the number of occureneces of \code{tax_id(s)} and
-#'return a data.frame containing the \code{tax_id(s)} and their frequencies
-#'
-#'@param x metaCVReport or taxonomyReportDB
-#'@param id \code{tax_id}
+#' count the occurences of ßcode{tax_id(s)}
+#' 
+#' @decsription count the occurences of tax_id(s) in a given metaCVReport or taxonomyReportDB object and 
+#' return a dataframe consisting of the tax_id(s) itself and their frequencies in the object. it is also possible 
+#' to only count one special tax_id 
+#' 
+#' @param metaCVReport a \code{metaCVReport} object
+#' @param taxonomyReportDB a \code{taxonomyReportDB} object
+#' @param id tax_id (if only one tax_id have to be count)
 #'
 #'@return data.frame
 #'

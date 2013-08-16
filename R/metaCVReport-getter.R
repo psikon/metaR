@@ -1,6 +1,6 @@
 #'Getter for metaCVReport
 #'
-#'@param x  \code{metaCVReport} object
+#'@param metaCVReport  a \code{metaCVReport} object
 #'@param id  tax_id
 #'
 #' @rdname metaCVReport-getter
