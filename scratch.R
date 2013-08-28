@@ -1,24 +1,56 @@
 require(metaR)
-
-## doku compelieren
-library(devtools)
-document(pkg=".",clean=T)
+require(ncbi)
+require.all('digest', 'roxygen2', 'R.utils')
+document(pkg=".", clean=T)
+my <- edit(roxygen2:::rd_arguments)
+reassignInPackage("rd_arguments", pkgName="roxygen2", my)
+document(".", clean=TRUE)
+devtools::test()
 
 # connection herstellen
-blastReport <- blastReportDBConnect("../blast.test.db")
-taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/program/db")
-#taxDB <- connectTaxonDB("../")
+blastReportDB <- blastReportDBConnect("~/local/workspace/bigBlastParser/test.db")
+taxDB <- connectTaxonDB("~/local/workspace/taxonomy/")
+taxReportDB <- taxonomyReportDBConnect('cache//taxonomy.db')
+
 
 # taxonomy data.frame erstellen
 db_df <- assignTaxon(1:1000, 
                      taxRanks = c("species", "genus", "tribe", "family", "order",
                                   "class", "phylum", "kingdom", "superkingdom"),
-                     blast_db = blastReport, 
+                     blast_db = blastReportDB, 
                      taxon_db = taxDB)
 
 # alles in ein neues Objekt umschichten
-taxReport <- createTaxonomyReportDB('taxonomy', blastReport, db_df, 0.98)
-taxReport
+taxReportDB <- createTaxonomyReportDB('cache/taxonomy.db', blastReportDB, db_df, 0.98)
+taxReportDB <- taxonomyReportDBConnect('cache/taxonomy.db')
+
+selectByRank(x=taxReport, taxRank='genus', classifier='epinephelus', taxon_db=taxDB)
+
+hitid <- db_query(taxReportDB, "SELECT hit_id FROM taxonomy", 1L)
+taxid <- getTaxID(x=taxReportDB, id=hitid, type='hit_id')
+taxonDB(taxid, taxon_db=taxDB[['taxon_db']])
+
+save(taxid, file="../ncbi/cache/taxid.rdata")
+
+
+undebug(taxonDB)
+undebug(ncbi:::new_taxon)
+undebug(ncbi:::dbGetTaxon)
+undebug(ncbi:::dbGetLineage)
+debug(ncbi:::Lineage)
+debug(ncbi:::new_Lineage)
+undebug(new)
+taxa <- getTaxon(x=taxReport, hit_id, type='hit_id', taxDB)
+
+
+
+
+
+r <- db_df[grep(classifier, tolower(getByRank(getTaxon(taxReport,
+                                                       db_df$hit_id,
+                                                       'hit_id',
+                                                       taxDB),
+                                              taxRank,value='ScientificName'))),]
 
 
 ###TODO
