@@ -1,83 +1,73 @@
 require(metaR)
-require(ncbi)
-require.all('digest', 'roxygen2', 'R.utils')
-document(pkg=".", clean=T)
-my <- edit(roxygen2:::rd_arguments)
-reassignInPackage("rd_arguments", pkgName="roxygen2", my)
-document(".", clean=TRUE)
-devtools::test()
+
+
+## doku compelieren
+library(devtools)
+document(pkg = ".",clean = T)
+Sys.setenv("PKG_CXXFLAGS" = "-std=c++11")
 
 # connection herstellen
-blastReportDB <- blastReportDBConnect("~/local/workspace/bigBlastParser/test.db")
-taxDB <- connectTaxonDB("~/local/workspace/taxonomy/")
-taxReportDB <- taxonomyReportDBConnect('cache//taxonomy.db')
+blastReport <- blastReportDBConnect("../blast.test.db")
+#taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/program/db")
+taxDB <- connectTaxonDB("../")
 
 
 # taxonomy data.frame erstellen
-db_df <- assignTaxon(1:1000, 
-                     taxRanks = c("species", "genus", "tribe", "family", "order",
+db_df <- assignTaxon(1:10000, 
+                    taxRanks = c("species", "genus", "tribe", "family", "order",
                                   "class", "phylum", "kingdom", "superkingdom"),
                      blast_db = blastReportDB, 
                      taxon_db = taxDB)
 
 # alles in ein neues Objekt umschichten
 taxReportDB <- createTaxonomyReportDB('cache/taxonomy.db', blastReportDB, db_df, 0.98)
-taxReportDB <- taxonomyReportDBConnect('cache/taxonomy.db')
 
-selectByRank(x=taxReport, taxRank='genus', classifier='epinephelus', taxon_db=taxDB)
+# alles in ein neues Objekt umschichten
+taxReport <- createTaxonomyReportDB('taxonomy.db', blastReport, db_df, 0.98)
+# nur Prokaryoten raussuchen
+eukaryota <- selectByRank(taxReport,taxRank="superkingdom",'eukaryota',taxDB)
+eukaryota <- createTaxonomyReportDB('eukaryota.db',blastReport,eukaryota,0.98)
+eukaryota
 
-hitid <- db_query(taxReportDB, "SELECT hit_id FROM taxonomy", 1L)
-taxid <- getTaxID(x=taxReportDB, id=hitid, type='hit_id')
-taxonDB(taxid, taxon_db=taxDB[['taxon_db']])
+# metaCV importieren
+metacv <- importMetaCV('/home/psehnert/daten/metagenomics/sample64/metacv/metpipe.res')
+metacv <- selectByScore(metacv,8)
+metacv
+cmp <- compareMetaCVwithBlast(blast,metacv,taxDB)
 
-save(taxid, file="../ncbi/cache/taxid.rdata")
-
-
-undebug(taxonDB)
-undebug(ncbi:::new_taxon)
-undebug(ncbi:::dbGetTaxon)
-undebug(ncbi:::dbGetLineage)
-debug(ncbi:::Lineage)
-debug(ncbi:::new_Lineage)
-undebug(new)
-taxa <- getTaxon(x=taxReport, hit_id, type='hit_id', taxDB)
-
-
-
-
-
-r <- db_df[grep(classifier, tolower(getByRank(getTaxon(taxReport,
-                                                       db_df$hit_id,
-                                                       'hit_id',
-                                                       taxDB),
-                                              taxRank,value='ScientificName'))),]
-
-
-###TODO
+# krona webtools
+createKronaFile(eukaryota, "krona-test.txt", taxDB)
+runKronaWebtools(input = "krona-test.txt", output = "krona-output.html",
+                 program_path = "/home/psehnert/daten/metagenomics/scripts/metpipe/programs/krona/")
 
 # getByRank wrapper integrieren
-# selection
 
-# getter Tester
-getQueryId(taxReport,94232,'tax_id')
-getQueryId(taxReport,5,'hit_id')
-getQueryId(taxReport,18,'query_id')
+####################################
+# taxonomyReportDB - getter Tester #
+####################################
 
-getHitId(taxReport,94232,'tax_id')
-getHitId(taxReport,5,'hit_id')
-getHitId(taxReport,18,'query_id')
+countTaxa(taxReport)
+countTaxa(taxReport,2)
+#taxonomy
+getQueryID(taxReport,94232,'tax_id')
+getQueryID(taxReport,5,'hit_id')
+getQueryID(taxReport,18,'query_id')
 
-getGeneId(taxReport,94232,'tax_id')
-getGeneId(taxReport,5,'hit_id')
-getGeneId(taxReport,18,'query_id')
+getHitID(taxReport,94232,'tax_id')
+getHitID(taxReport,5,'hit_id')
+getHitID(taxReport,18,'query_id')
+
+getGeneID(taxReport,94232,'tax_id')
+getGeneID(taxReport,5,'hit_id')
+getGeneID(taxReport,18,'query_id')
 
 getAccession(taxReport,94232,'tax_id')
 getAccession(taxReport,5,'hit_id')
 getAccession(taxReport,18,'query_id')
 
-getTaxId(taxReport,94232,'tax_id')
-getTaxId(taxReport,5,'hit_id')
-getTaxId(taxReport,18,'query_id')
+getTaxID(taxReport,94232,'tax_id')
+getTaxID(taxReport,5,'hit_id')
+getTaxID(taxReport,18,'query_id')
 
 getScientificName(taxReport,94232,'tax_id')
 getScientificName(taxReport,5,'hit_id')
@@ -87,6 +77,7 @@ getRank(taxReport,94232,'tax_id')
 getRank(taxReport,5,'hit_id')
 getRank(taxReport,18,'query_id')
 
+# ncbi wrapper
 getTaxon(taxReport,94232,'tax_id',taxDB)
 getTaxon(taxReport,5,'hit_id',taxDB)
 getTaxon(taxReport,18,'query_id',taxDB)
@@ -99,20 +90,15 @@ getOtherName(taxReport,293821,'tax_id',taxDB)
 getOtherName(taxReport,16,'hit_id',taxDB)
 getOtherName(taxReport,18,'query_id',taxDB)
 
-getParentTaxId(taxReport,293821,'tax_id',taxDB)
-getParentTaxId(taxReport,16,'hit_id',taxDB)
-getParentTaxId(taxReport,18,'query_id',taxDB)
-
-getParentTaxId(taxReport,293821,'tax_id',taxDB)
-getParentTaxId(taxReport,16,'hit_id',taxDB)
-getParentTaxId(taxReport,18,'query_id',taxDB)
+getParentTaxID(taxReport,293821,'tax_id',taxDB)
+getParentTaxID(taxReport,16,'hit_id',taxDB)
+getParentTaxID(taxReport,18,'query_id',taxDB)
 
 #getByRank(taxReport,293821,'tax_id','phylum',taxDB)
 #getByRank(taxReport,16,'hit_id','phylum',taxDB)
 #getByRank(taxReport,18,'query_id','phylum',taxDB)
 
 # query table 
-
 getQueryDef(taxReport,38293,'tax_id')
 getQueryDef(taxReport,79,'hit_id')
 getQueryDef(taxReport,153,'query_id')
@@ -135,17 +121,17 @@ getHitLen(taxReport,5,'hit_id')
 getHitLen(taxReport,18,'query_id')
 
 # hsp table
-getHspId(taxReport,38293,'tax_id')
-getHspId(taxReport,5,'hit_id')
-getHspId(taxReport,18,'query_id')
+getHspID(taxReport,94232,'tax_id')
+getHspID(taxReport,5,'hit_id')
+getHspID(taxReport,18,'query_id')
 
 getHspNum(taxReport,94232,'tax_id')
 getHspNum(taxReport,5,'hit_id')
 getHspNum(taxReport,18,'query_id')
 
-getBitScore(taxReport,94232,'tax_id')
-getBitScore(taxReport,5,'hit_id')
-getBitScore(taxReport,18,'query_id')
+getBitscore(taxReport,94232,'tax_id')
+getBitscore(taxReport,5,'hit_id')
+getBitscore(taxReport,18,'query_id')
 
 getScore(taxReport,94232,'tax_id')
 getScore(taxReport,5,'hit_id')
@@ -203,8 +189,23 @@ getHitSeq(taxReport,94232,'tax_id')
 getHitSeq(taxReport,5,'hit_id')
 getHitSeq(taxReport,18,'query_id')
 
-getMidline(taxReport,94232,'tax_id')
-getMidline(taxReport,5,'hit_id')
-getMidline(taxReport,18,'query_id')
+getMatch(taxReport,94232,'tax_id')
+getMatch(taxReport,5,'hit_id')
+getMatch(taxReport,18,'query_id')
 
+################################
+# metaCVReport - getter Tester #
+################################
 
+metaCV <- importMetaCV('../metacv.test.res')
+
+countTaxa(metaCV,2)
+countTaxa(metaCV)
+
+getQueryDef(metaCV,2)
+getScore(metaCV,2)
+getScientificName(metaCV,2)
+getKeggID(metaCV,2)
+getCogID(metaCV,2)
+getTaxID(metaCV,2)
+getGeneID(metaCV,2)

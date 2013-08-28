@@ -1,6 +1,5 @@
 #'@importFrom ncbi taxonByGeneID
 #'@importFrom ncbi getByRank
-#'@importFrom ncbi getTaxID
 #'@importFrom iterators iter
 #'@importFrom iterators nextElem
 #'@importFrom assertthat '%has_name%'
@@ -42,7 +41,8 @@ LCA <- function(query_table,
               query_table %has_name% 'accession')
   # check the ranks for valid ncbi rank designations
   if (!all(taxRanks %in% ncbi:::.ranks)) {
-    stop("'taxRanks' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
+    stop("'taxRanks' must be of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], 
+                                          collapse=', '))
   }
   #sort the ranks in ascending order,e.g.  from species to superkingdom
   taxRanks <- names(rev(sort(sapply(taxRanks, match, ncbi:::.ranks))))
@@ -54,7 +54,8 @@ LCA <- function(query_table,
   taxa <- taxonByGeneID(query_table[["gene_id"]], geneid_db, taxon_db)
   # Condition 1: when the taxa have multiple TaxId(s) at the superkingdom 
   # rank discard this query number and go to the next
-  if (nunique(getByRank(taxa, topRank, 'TaxId')) > 1) {
+  if (nunique(getByRank(taxa, topRank, 'TaxId')) > 1 || 
+        all(getByRank(taxa, topRank, 'TaxId') %in% NA_character_)) {
     return(NULL)
   }
   # create an iterator for the ranks

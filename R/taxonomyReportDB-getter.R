@@ -13,11 +13,11 @@ NULL
 
 
 .getTaxID <- .getterConstructor ('tax_id', 'taxonomy', as = 'integer')
-#' Getters for taxonomyReportDB
+#' Getter for taxonomyReportDB
 #'
-#' @param x A \code{taxonomyReportDB} object.
-#' @param id An identifier
-#' @param type Type of identifier. One of \sQuote{tax_id}, \sQuote{query_id},
+#' @param x a \code{taxonomyReportDB} object.
+#' @param id an identifier
+#' @param type type of identifier. One of \sQuote{tax_id}, \sQuote{query_id},
 #' or \sQuote{hit_id}.
 #'
 #'@rdname taxonomyReportDB-getter
@@ -83,7 +83,7 @@ setMethod("getQueryID", "taxonomyReportDB", function (x, id, type) {
 .getHitID <- .getterConstructor ('hit_id', 'taxonomy', as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitID", signature='taxonomyReportDB', function (x, id, type) {
+setMethod("getHitID", 'taxonomyReportDB', function (x, id, type) {
   unlist(.getHitID(x, id, type))
 })
 
@@ -110,7 +110,7 @@ setMethod("getAccession", "taxonomyReportDB", function (x, id, type) {
 #'@rdname taxonomyReportDB-getter
 #'@export
 setMethod("getQueryDef", "taxonomyReportDB", function (x, id, type) {
-  unlist(.getQueryDef(x, getQueryID(x, id, typ ), 'query_id'))
+  unlist(.getQueryDef(x, getQueryID(x, id, type ), 'query_id'))
 })
 
 
@@ -178,14 +178,16 @@ setMethod("getHspNum", "taxonomyReportDB", function (x, id, type) {
                                    as = 'numeric')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getBitscore", "taxonomyReportDB", function (x, id, typ) {
-  unlist(.getBitscore(x, getHitID(x,id,typ), 'hit_id'))
+setMethod("getBitscore", "taxonomyReportDB", function (x, id, type) {
+  unlist(.getBitscore(x, getHitID(x,id,type), 'hit_id'))
 })
 
 
 .getScore <- .getterConstructor('score', 'hsp', WHERE = 'hit_id',
                                 VAL = 'hit_id', TABLE = 'taxonomy', 
                                 as = 'numeric')
+#'@rdname taxonomyReportDB-getter
+#'@export
 setMethod("getScore", "taxonomyReportDB", function (x, id, type) {
   unlist(.getScore(x, getHitID(x, id, type), 'hit_id'))
 })
@@ -199,10 +201,6 @@ setMethod("getScore", "taxonomyReportDB", function (x, id, type) {
 setMethod("getEvalue", "taxonomyReportDB", function (x, id, type) {
   unlist(.getEvalue(x, getHitID(x, id, type), 'hit_id'))
 })
-
-#' getQueryFrom
-#'
-
 
 .getQueryFrom <- .getterConstructor('query_from', 'hsp', WHERE = 'hit_id',
                                     VAL = 'hit_id', TABLE = 'taxonomy', 
