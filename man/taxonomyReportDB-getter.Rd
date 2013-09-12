@@ -1,4 +1,4 @@
-\name{getTaxon}
+\name{getQueryID}
 \alias{getAccession}
 \alias{getAlignLen}
 \alias{getBitscore}
@@ -30,9 +30,10 @@
 \alias{getQueryTo}
 \alias{getRank}
 \alias{getScientificName}
+\alias{getScore}
 \alias{getTaxID}
 \alias{getTaxon}
-\title{Getters for taxonomyReportDB}
+\title{Getter for taxonomyReportDB}
 \arguments{
   \item{x}{A \code{taxonomyReportDB} object.}
 
@@ -42,6 +43,6 @@
   \sQuote{query_id}, or \sQuote{hit_id}.}
 }
 \description{
-  Getters for taxonomyReportDB
+  Getter for taxonomyReportDB
 }
 

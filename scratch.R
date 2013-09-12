@@ -12,6 +12,7 @@ taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/progr
 #taxDB <- connectTaxonDB("../")
 
 
+
 # taxonomy data.frame erstellen
 db_df <- assignTaxon(1:10000, 
                     taxRanks = c("species", "genus", "tribe", "family", "order",
@@ -21,6 +22,7 @@ db_df <- assignTaxon(1:10000,
 
 # alles in ein neues Objekt umschichten
 taxReport <- createTaxonomyReportDB('taxonomy.db', blastReport, db_df, 0.98)
+taxReport
 # nur Prokaryoten raussuchen
 eukaryota <- selectByRank(taxReport,taxRank="superkingdom",'eukaryota',taxDB)
 eukaryota <- createTaxonomyReportDB('eukaryota.db',blastReport,eukaryota,0.98)

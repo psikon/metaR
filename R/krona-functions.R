@@ -8,7 +8,7 @@
 #'
 #'@seealso runKronaWebtools
 #'@export
-createKronaFile <- function(taxonomyReport, output) {
+createKronaTextFile <- function(taxonomyReport, output) {
   # count the occurences of the tax_ids
   df <- countTaxa(taxonomyReport)
   # get for every counted tax_id the linage 
@@ -20,7 +20,21 @@ createKronaFile <- function(taxonomyReport, output) {
                                 }, 
                                 "character"))  
   # convert and save the results in a tab separeted file
-  write.table(df[, -1], output, quote=F, sep="\t", row.names=F, col.names=F)
+  write.table(df[, -1], output, quote = F, sep = "\t", row.names = F, col.names = F)
+}
+
+createKronaTabFile <- function(blastReport, output) {
+  df <- cbind(blastr::getQueryDef(blastReport),
+              "subject",
+              blastr::getAlignLen(blastReport),
+              "mismatches",
+              blastr::getGaps(blastReport),
+              blastr::getQueryFrom(blastReport),
+              blastr::getQueryTo(blastReport),
+              blastr::getHitFrom(blastReport),
+              blastr::getHitTo(blastReport),
+              blastr::getEvalue(blastReport),
+              blastr::getBitscore(blastReport))
 }
 
 #' run the Krona Webtools from R

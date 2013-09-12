@@ -4,11 +4,11 @@
 \alias{updateTable}
 \title{create, update or drop a SQL-Table}
 \usage{
-  createTable(blast_db, tbl, tbl_scheme)
+  createTable(db, tbl, tbl_scheme)
 
-  updateTable(blast_db, tbl, df)
+  updateTable(db, tbl, df)
 
-  dropTable(blast_db, tbl)
+  dropTable(db, tbl)
 }
 \arguments{
   \item{blast_db}{connection to a database}

@@ -15,7 +15,7 @@
 }
 \description{
   Create, update or connect to a local installation of the
-  NCBI Taxonomy Database. The Connection objectis returned
+  NCBI Taxonomy Database. The Connection object is returned
   as a list of connections to \code{'taxon.db'} and
   \code{'geneid.db'}.
 }
