@@ -1,5 +1,5 @@
 require(metaR)
-
+require(rmisc)
 
 ## doku compelieren
 library(devtools)
@@ -17,7 +17,7 @@ taxDB <- connectTaxonDB("../")
 db_df <- assignTaxon(1:10000, 
                     taxRanks = c("species", "genus", "tribe", "family", "order",
                                   "class", "phylum", "kingdom", "superkingdom"),
-                    blast_db = blastReport, 
+                    blastReportDB = blastReport, 
                     taxon_db = taxDB)
 
 # alles in ein neues Objekt umschichten

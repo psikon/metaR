@@ -5,7 +5,7 @@
   assignTaxon(query_id, bitscore_tolerance = 0.98,
     coverage_threshold = 0.5,
     taxRanks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
-    blast_db, taxon_db)
+    blastReportDB, taxon_db)
 }
 \arguments{
   \item{query_id}{1:n \emph{query_id(s)} from

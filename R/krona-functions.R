@@ -42,9 +42,12 @@ createKronaFile <- function(taxonomyReportDB, output, taxon_db) {
 #'\item bitscore
 #'
 #'
-blastXML_to_tab <- function(taxonomyReportDB, output, taxon_db) {
+blastXML_to_tab <- function(blastReportDB, output, taxon_db) {
   
-  #hsps <- db_query()
+  
+  hsps <- cbind(db_query(blastReportDB, 'SELECT align_len, gaps, query_from, query_to, hit_from, hit_to, evalue, bit_score  FROM hsp'))
+  hits <- db_query(blastReportDB,'SELECT * from hit')
+  
   # suche hsps raus
   # ermittle die Hit ids
   # such die query Ids raus
