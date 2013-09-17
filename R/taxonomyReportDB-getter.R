@@ -15,9 +15,9 @@ NULL
 .getTaxID <- .getterConstructor ('tax_id', 'taxonomy', as = 'integer')
 #' Getter for taxonomyReportDB
 #'
-#' @param x A \code{taxonomyReportDB} object.
-#' @param id An identifier
-#' @param type Type of identifier. One of \sQuote{tax_id}, \sQuote{query_id},
+#' @param x a \code{taxonomyReportDB} object.
+#' @param id an identifier
+#' @param type type of identifier. One of \sQuote{tax_id}, \sQuote{query_id},
 #' or \sQuote{hit_id}.
 #'
 #'@rdname taxonomyReportDB-getter
@@ -83,7 +83,7 @@ setMethod("getQueryID", "taxonomyReportDB", function (x, id, type) {
 .getHitID <- .getterConstructor ('hit_id', 'taxonomy', as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitID", signature='taxonomyReportDB', function (x, id, type) {
+setMethod("getHitID", 'taxonomyReportDB', function (x, id, type) {
   unlist(.getHitID(x, id, type))
 })
 

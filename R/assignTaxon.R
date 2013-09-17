@@ -35,13 +35,13 @@ assignTaxon <- function (query_id,
                          coverage_threshold = 0.5,
                          taxRanks = c("species", "genus", "tribe", "family", "order",
                                       "class", "phylum", "kingdom", "superkingdom"),
-                         blast_db,
+                         blastReportDB,
                          taxon_db)
 {
   # make the function accessable for 1:n query_id(s)
   ans <- llply(query_id, .assignTaxon, bitscore_tolerance = bitscore_tolerance,
                 coverage_threshold = coverage_threshold, taxRanks = taxRanks, 
-                blast_db = blast_db, taxon_db = taxon_db,.progress = "text")
+               blastReportDB = blastReportDB, taxon_db = taxon_db,.progress = "text")
   # remove entries with NA
   ans <- compact(ans)
   # convert to data.frame
@@ -53,15 +53,15 @@ assignTaxon <- function (query_id,
                           coverage_threshold = 0.5,
                           taxRanks = c("species", "genus", "tribe", "family", "order",
                                        "class", "phylum", "kingdom", "superkingdom"),
-                          blast_db,
+                          blastReportDB,
                           taxon_db)
 {
   # filter hits for query coverage
-  coverage_threshold_idx <- which(getQueryCoverage(blast_db, query_id) >= coverage_threshold)
-  candidate_hits <- .getHit(blast_db, query_id)[coverage_threshold_idx, ]
+  coverage_threshold_idx <- which(blastr::getQueryCoverage(blastReportDB, query_id) >= coverage_threshold)
+  candidate_hits <- .getHit(blastReportDB, query_id)[coverage_threshold_idx, ]
   if (nrow(candidate_hits) >= 1) {
     # get the hsp(s) of the hit(s)
-    candidate_hsps <- .getSelectedHits(blast_db, query_id, getHitID(blast_db, query_id)[coverage_threshold_idx])
+    candidate_hsps <- .getSelectedHits(blastReportDB, query_id, getHitID(blastReportDB, query_id)[coverage_threshold_idx])
     # filter the hsp(s) basing on tolerance threshold
     candidate_hsps <- .filterHsp(candidate_hsps, perc = bitscore_tolerance)
     # remove hit(s) without hsp(s)

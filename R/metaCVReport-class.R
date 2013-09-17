@@ -31,7 +31,7 @@ setMethod("show","metaCVReport",
             n <- nrow(object)
             showme <- sprintf('%s object with %s query rows',
                               sQuote(class(object)), n)
-            cat(showme, sep="\n")
+            cat(showme, sep = "\n")
           })
 
 #'@param path
@@ -45,9 +45,9 @@ importMetaCV <- function(path) {
                                     list(character(0), integer(0), integer(0), 
                                          character(0), character(0), integer(0), 
                                          character(0)),
-                                    sep="\t", na.strings="_")), 
-                       stringsAsFactors=F)
+                                    sep = "\t", na.strings = "_")), 
+                       stringsAsFactors = F)
   colnames(tmp) <- c('query_def', 'score', 'gene_id', 'kegg_id', 
                      'cog_id', 'tax_id', 'scientific_name')
-  new("metaCVReport",tmp)
+  new("metaCVReport", tmp)
 }

@@ -3,40 +3,55 @@
 #'@description creates an tab-separated input file for the text import funtion of the 
 #'Krona Webtools consisting of the the count of taxons and the corresponding linage
 #'
-#'@param taxonomyReport \code{taxonomyReport} object
+#'@param taxonomyReportDB \code{taxonomyReportDB} object
 #'@param output location and name of the output file
 #'
 #'@seealso runKronaWebtools
 #'@export
-createKronaTextFile <- function(taxonomyReport, output) {
+
+createKronaFile <- function(taxonomyReportDB, output, taxon_db) {
+
   # count the occurences of the tax_ids
-  df <- countTaxa(taxonomyReport)
+  df <- countTaxa(taxonomyReportDB)
   # get for every counted tax_id the linage 
-  df <- cbind(df, linage=vapply(df$tax_id, 
+  df <- cbind(df, linage = vapply(df$tax_id, 
                                 function(x) {
                                   paste(unique(taxonDB(as.integer(x),
-                                                       taxDB[[1]])@Lineage@ScientificName),
-                                        collapse="\t")
+                                                       taxon_db[['taxon_db']])@Lineage@ScientificName),
+                                        collapse = "\t")
                                 }, 
                                 "character"))  
   # convert and save the results in a tab separeted file
   write.table(df[, -1], output, quote = F, sep = "\t", row.names = F, col.names = F)
 }
-
-createKronaTabFile <- function(blastReport, output) {
-  df <- cbind(blastr::getQueryDef(blastReport),
-              "subject",
-              blastr::getAlignLen(blastReport),
-              "mismatches",
-              blastr::getGaps(blastReport),
-              blastr::getQueryFrom(blastReport),
-              blastr::getQueryTo(blastReport),
-              blastr::getHitFrom(blastReport),
-              blastr::getHitTo(blastReport),
-              blastr::getEvalue(blastReport),
-              blastr::getBitscore(blastReport))
+#' extract from the blast db the blast tabular output 
+#'
+#'@description extract 12 fields from the blast db:
+#'
+#'\item query_def
+#'\item subject id (example: gi|350280512|gb|JF719726.1|)
+#'\item perc_identity
+#'\item align_len
+#'\item mismatches
+#'\item gap opens
+#'\item query_from
+#'\item query_to
+#'\item hit_from
+#'\item hit_to
+#'\item evalue
+#'\item bitscore
+#'
+#'
+blastXML_to_tab <- function(taxonomyReportDB, output, taxon_db) {
+  
+  #hsps <- db_query()
+  # suche hsps raus
+  # ermittle die Hit ids
+  # such die query Ids raus
+  #df <- cbind(db_query(taxonomyReportDB,'SELECT query_def FROM query',1L),
+  #            'Platzhalter',
+  #            db_query(taxonomyReportDB,'SELECT align_len FROM hsp',1L))
 }
-
 #' run the Krona Webtools from R
 #' 
 #' @description Wrapper function for running the Krona Webtools Script \emph{ImportText.pl} from

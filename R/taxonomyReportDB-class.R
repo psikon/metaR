@@ -123,20 +123,20 @@ taxonomyReportDBConnect <- function (db_path) {
 #' @usage createTaxonomyReportDB(blast_db,taxonomy_table)
 #' @rdname taxonomyReportDB-class
 #' @export
-createTaxonomyReportDB <- function (db_name,blast_db,taxonomy_table, bitscore_tolerance) {
+createTaxonomyReportDB <- function (db_name,blastReportDB,taxonomy_table, bitscore_tolerance) {
   # create a new database with blastReportDB Schema
-  con <- db_create(db_name,dbSchema=blastr:::blast_db.sql)
+  con <- db_create(db_name, dbSchema = blastr:::blast_db.sql)
   # reduce and insert the hit table 
   message('Creating hit table ')
   updateTable(con,'hit', do.call(rbind, llply(taxonomy_table$hit_id, 
                 .fun = function(x) {
-                  db_query(blast_db, paste("SELECT * FROM hit WHERE hit_id =", x))
+                  db_query(blastReportDB, paste("SELECT * FROM hit WHERE hit_id =", x))
                 }, .progress = "text")))
   # reduce and insert the query table
   message('Creating query table ')
   updateTable(con, 'query', unique(do.call(rbind, llply(taxonomy_table$hit_id,
                 .fun = function(x) {
-                  db_query(blast_db,paste("SELECT * FROM query 
+                  db_query(blastReportDB,paste("SELECT * FROM query 
                           WHERE query_id = (SELECT query_id FROM hit 
                                             WHERE hit_id =", x, ")"))
                   }, .progress = "text"))))
@@ -145,7 +145,7 @@ createTaxonomyReportDB <- function (db_name,blast_db,taxonomy_table, bitscore_to
   updateTable(con, 'hsp', do.call(rbind, llply(taxonomy_table$hit_id,
                 .fun = function(x) {
                   # need to filter again towards bitscore_tolerance
-                  .filterHsp(db_query(blast_db, 
+                  .filterHsp(db_query(blastReportDB, 
                                       paste("SELECT * FROM hsp 
                                              WHERE hit_id = (SELECT hit_id FROM hit 
                                                              WHERE hit_id =", x, ")")),
@@ -157,3 +157,4 @@ createTaxonomyReportDB <- function (db_name,blast_db,taxonomy_table, bitscore_to
   new('taxonomyReportDB',con)
 }
 
+#insertNewDataSet <- function(taxonomyReportDB)

@@ -3,13 +3,13 @@ require(metaR)
 
 ## doku compelieren
 library(devtools)
-document(pkg=".",clean=T)
-Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
+document(pkg = ".",clean = T)
+Sys.setenv("PKG_CXXFLAGS" = "-std=c++11")
 
 # connection herstellen
 blastReport <- blastReportDBConnect("../blast.test.db")
-taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/program/db")
-#taxDB <- connectTaxonDB("../")
+#taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/program/db")
+taxDB <- connectTaxonDB("../")
 
 
 
@@ -35,9 +35,9 @@ metacv
 cmp <- compareMetaCVwithBlast(blast,metacv,taxDB)
 
 # krona webtools
-createKronaFile(taxReport, "krona-test.txt")
-runKronaWebtools(input="krona-test.txt",output="krona-output.html",
-                 program_path="/home/psehnert/daten/metagenomics/scripts/metpipe/programs/krona/")
+createKronaFile(eukaryota, "krona-test.txt", taxDB)
+runKronaWebtools(input = "krona-test.txt", output = "krona-output.html",
+                 program_path = "/home/psehnert/daten/metagenomics/scripts/metpipe/programs/krona/")
 
 # getByRank wrapper integrieren
 

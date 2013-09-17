@@ -3,7 +3,7 @@
 #' @description This function search in the database for given specifications based 
 #' on the taxonomical rank of the database entry.
 #' 
-#'@param x \code{taxonomyReportDB} object
+#'@param taxonomyReportDB a \code{taxonomyReportDB} object
 #'@param taxRank a valid NCBI taxonomy rank (e.g. \emph{'genus'})
 #'@param classifier name of rank or species
 #'@param taxon_db \code{taxon_db} object
@@ -12,22 +12,22 @@
 #'
 #'@rdname selectByRank
 #'@export
-selectByRank <- function(x, taxRank, classifier, taxon_db) {
+selectByRank <- function(taxonomyReportDB, taxRank, classifier, taxon_db) {
   # check for valid taxRanks
   if (!taxRank %in% ncbi:::.ranks) {
     stop("'taxRank' must be one of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
   }
   # create a TaxonList with all hit(s) in hit table
-  hit_id <- db_query(x, "SELECT hit_id FROM taxonomy", 1L)
-  taxa <- getTaxon(x, id=hit_id, typ='hit_id', taxon_db)
+  hit_id <- db_query(taxonomyReportDB, "SELECT hit_id FROM taxonomy", 1L)
+  taxa <- getTaxon(taxonomyReportDB, id=hit_id, typ='hit_id', taxon_db)
   # search for hit_id(s) matching the classifier
   id <- hit_id[which(tolower(getByRank(taxa, taxRank, value='ScientificName')) == tolower(classifier))]
   # create a data.frame with them
-  do.call('rbind', lapply(id, function(i) db_query(x, paste('SELECT * FROM taxonomy WHERE hit_id =', i))))
+  do.call('rbind', lapply(id, function(i) db_query(taxonomyReportDB, paste('SELECT * FROM taxonomy WHERE hit_id =', i))))
 }
 
 
-#' filter MetaCVReport by score 
+#' filter \code{metaCVReport} by score 
 #' 
 #'@description get only the entries with a score greater than x, to prevent 
 #'wrongly classified entries
@@ -55,8 +55,8 @@ selectByRank <- function(x, taxRank, classifier, taxon_db) {
 # 
 #'@rdname selectByScore
 #'@export
-selectByScore <- function(x,score) {
-  sel <-  x[which(x[,'score'] >= score),]
+selectByScore <- function(metaCVReport, score) {
+  sel <-  metaCVReport[which(metaCVReport[, 'score'] >= score), ]
   new('metaCVReport',sel)
 }
   
