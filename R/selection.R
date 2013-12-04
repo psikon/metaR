@@ -3,7 +3,7 @@
 #' @description This function search in the database for given specifications based 
 #' on the taxonomical rank of the database entry.
 #' 
-#'@param taxonomyReportDB a \code{taxonomyReportDB} object
+#'@param txDB a \code{taxonomyReportDB} object
 #'@param taxRank a valid NCBI taxonomy rank (e.g. \emph{'genus'})
 #'@param classifier name of rank or species
 #'@param taxon_db \code{taxon_db} object
@@ -12,14 +12,15 @@
 #'
 #'@rdname selectByRank
 #'@export
-selectByRank <- function(taxonomyReportDB, taxRank, classifier, taxon_db) {
+selectByRank <- function(txDB, taxRank, classifier) {
   # check for valid taxRanks
-  if (!taxRank %in% ncbi:::.ranks) {
-    stop("'taxRank' must be one of ", paste0(ncbi:::.ranks[-c(1, length(ncbi:::.ranks))], collapse=', '))
+  ncbi_ranks <- ncbi::.ncbi_taxon_ranks()
+  if (!taxRank %in% ncbi_ranks) {
+    stop("'taxRank' must be one of ", paste0(ncbi_ranks[-c(1, length(ncbi_ranks))], collapse=', '))
   }
   # create a TaxonList with all hit(s) in hit table
-  hit_id <- db_query(taxonomyReportDB, "SELECT hit_id FROM taxonomy", 1L)
-  taxa <- getTaxon(taxonomyReportDB, id=hit_id, typ='hit_id', taxon_db)
+  hit_id <- db_query(txDB, "SELECT hit_id FROM taxonomy", 1L)
+  taxa <- getTaxon(txDB, id=hit_id, type='hit_id')
   # search for hit_id(s) matching the classifier
   id <- hit_id[which(tolower(getByRank(taxa, taxRank, value='ScientificName')) == tolower(classifier))]
   # create a data.frame with them

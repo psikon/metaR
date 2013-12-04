@@ -35,11 +35,11 @@
 \alias{getTaxon}
 \title{Getter for taxonomyReportDB}
 \arguments{
-  \item{x}{A \code{taxonomyReportDB} object.}
+  \item{x}{a \code{taxonomyReportDB} object.}
 
-  \item{id}{An identifier}
+  \item{id}{an identifier}
 
-  \item{type}{Type of identifier. One of \sQuote{tax_id},
+  \item{type}{type of identifier. One of \sQuote{tax_id},
   \sQuote{query_id}, or \sQuote{hit_id}.}
 }
 \description{

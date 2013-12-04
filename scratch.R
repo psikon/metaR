@@ -17,8 +17,11 @@ taxDB <- connectTaxonDB("../")
 db_df <- assignTaxon(1:10000, 
                     taxRanks = c("species", "genus", "tribe", "family", "order",
                                   "class", "phylum", "kingdom", "superkingdom"),
-                    blastReportDB = blastReport, 
-                    taxon_db = taxDB)
+                     blast_db = blastReportDB, 
+                     taxon_db = taxDB)
+
+# alles in ein neues Objekt umschichten
+taxReportDB <- createTaxonomyReportDB('cache/taxonomy.db', blastReportDB, db_df, 0.98)
 
 # alles in ein neues Objekt umschichten
 taxReport <- createTaxonomyReportDB('taxonomy.db', blastReport, db_df, 0.98)

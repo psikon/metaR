@@ -1,18 +1,24 @@
-#'@importClassesFrom ncbi Taxon
-#'@importClassesFrom ncbi TaxonList
-#'@importFrom ncbi taxonDB
-#'@importFrom ncbi getTaxID
-#'@importFrom ncbi getParentTaxID
-#'@importFrom ncbi getScientificName
-#'@importFrom ncbi getRank
-#'@importFrom ncbi getLineage
-#'@importFrom ncbi getOtherName
-#'@importFrom blastr getGeneID
-#'@importFrom blastr getScore
+#' @include taxonomyReportDB-class.R
+#' @importClassesFrom ncbi Taxon TaxonList
+#' @importFrom ncbi taxonDB getTaxID getParentTaxID getScientificName getRank getLineage getOtherName
 NULL
 
+setMethod('countTaxa', 'taxonomyReportDB', function(x, id = NULL) {
+  if (is.null(id)) {
+    stmt <- "SELECT tax_id, COUNT(tax_id) FROM taxonomy GROUP by tax_id"
+  } else {
+    r <- range(id)
+    assert_that(r[1] > 0)
+    tax_range <- paste("tax_id >=", r[1], "AND tax_id <=", r[2])
+    stmt <- paste("SELECT tax_id, COUNT(tax_id) FROM taxonomy WHERE", tax_range, "GROUP BY tax_id")                  
+  }
+  df <- db_query(x, stmt)
+  colnames(df) <- c('tax_id', 'count')
+  df
+})
 
-.getTaxID <- .getterConstructor ('tax_id', 'taxonomy', as = 'integer')
+
+.getTaxID <- .getterConstructor('tax_id', 'taxonomy', as = 'integer')
 #' Getter for taxonomyReportDB
 #'
 #' @param x a \code{taxonomyReportDB} object.
@@ -22,22 +28,22 @@ NULL
 #'
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getTaxID", "taxonomyReportDB", function (x, id, type) {
+setMethod("getTaxID", "taxonomyReportDB", function(x, id, type) {
   unlist(.getTaxID(x, id, type))
 })
 
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod('getParentTaxID','taxonomyReportDB', function (x, id, type, taxon_db) {
-  getParentTaxID(getTaxon(x, id, type, taxon_db))
+setMethod('getParentTaxID','taxonomyReportDB', function(x, id, type) {
+  getParentTaxID(getTaxon(x, id, type))
 })
 
 
 .getScientificName <- .getterConstructor ('scientific_name', 'taxonomy', as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getScientificName", "taxonomyReportDB", function (x, id, type) {
+setMethod("getScientificName", "taxonomyReportDB", function(x, id, type) {
   unlist(.getScientificName(x, id, type))
 })
 
@@ -45,29 +51,29 @@ setMethod("getScientificName", "taxonomyReportDB", function (x, id, type) {
 .getRank <- .getterConstructor ('rank', 'taxonomy', as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getRank", "taxonomyReportDB", function (x, id, type) {
+setMethod("getRank", "taxonomyReportDB", function(x, id, type) {
   unlist(.getRank(x, id, type))
 })
 
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod('getTaxon','taxonomyReportDB', function (x, id, type, taxon_db) {
-  taxonDB(getTaxID(x, id, type), taxon_db[['taxon_db']])
+setMethod('getTaxon','taxonomyReportDB', function(x, id, type) {
+  taxonDB(getTaxID(x, id, type))
 })
 
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod('getLineage','taxonomyReportDB', function (x, id, type, taxon_db) {
-  getLineage(getTaxon(x, id, type, taxon_db))
+setMethod('getLineage','taxonomyReportDB', function(x, id, type) {
+  getLineage(getTaxon(x, id, type))
 })
 
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod('getOtherName','taxonomyReportDB', function (x, id, type, taxon_db) {
-  getOtherName(getTaxon(x, id, type, taxon_db))
+setMethod('getOtherName','taxonomyReportDB', function(x, id, type) {
+  getOtherName(getTaxon(x, id, type))
 })
 
 
@@ -75,7 +81,7 @@ setMethod('getOtherName','taxonomyReportDB', function (x, id, type, taxon_db) {
 .getQueryID <- .getterConstructor('query_id', 'taxonomy', as = 'integer')
 #' @rdname taxonomyReportDB-getter
 #' @export
-setMethod("getQueryID", "taxonomyReportDB", function (x, id, type) {
+setMethod("getQueryID", "taxonomyReportDB", function(x, id, type) {
   unlist(.getQueryID(x, id, type))
 })
 
@@ -83,7 +89,7 @@ setMethod("getQueryID", "taxonomyReportDB", function (x, id, type) {
 .getHitID <- .getterConstructor ('hit_id', 'taxonomy', as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitID", 'taxonomyReportDB', function (x, id, type) {
+setMethod("getHitID", 'taxonomyReportDB', function(x, id, type) {
   unlist(.getHitID(x, id, type))
 })
 
@@ -91,15 +97,15 @@ setMethod("getHitID", 'taxonomyReportDB', function (x, id, type) {
 .getGeneID <- .getterConstructor ('gene_id', 'taxonomy', as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getGeneID", "taxonomyReportDB", function (x, id, type) {
+setMethod("getGeneID", "taxonomyReportDB", function(x, id, type) {
   unlist(.getGeneID(x, id, type))
 })
 
 
-.getAccession <- .getterConstructor ('accession', 'taxonomy', as = 'character')
+.getAccession <- .getterConstructor('accession', 'taxonomy', as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getAccession", "taxonomyReportDB", function (x, id, type) {
+setMethod("getAccession", "taxonomyReportDB", function(x, id, type) {
   unlist(.getAccession(x, id, type))
 })
 
@@ -109,7 +115,7 @@ setMethod("getAccession", "taxonomyReportDB", function (x, id, type) {
                                    as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getQueryDef", "taxonomyReportDB", function (x, id, type) {
+setMethod("getQueryDef", "taxonomyReportDB", function(x, id, type) {
   unlist(.getQueryDef(x, getQueryID(x, id, type ), 'query_id'))
 })
 
@@ -119,17 +125,17 @@ setMethod("getQueryDef", "taxonomyReportDB", function (x, id, type) {
                                    as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getQueryLen", "taxonomyReportDB", function (x, id, type) {
+setMethod("getQueryLen", "taxonomyReportDB", function(x, id, type) {
   unlist(.getQueryLen(x, getQueryID(x, id, type), 'query_id'))
 })
 
 
-.getHitNum <- .getterConstructor ('hit_num', 'hit', WHERE = 'hit_id',
-                                    VAL = 'hit_id', TABLE = 'taxonomy', 
-                                    as = 'integer')
+.getHitNum <- .getterConstructor('hit_num', 'hit', WHERE = 'hit_id',
+                                 VAL = 'hit_id', TABLE = 'taxonomy', 
+                                 as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitNum", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHitNum", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHitNum(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -139,7 +145,7 @@ setMethod("getHitNum", "taxonomyReportDB", function (x, id, type) {
                                     as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getDefinition", "taxonomyReportDB", function (x, id, type) {
+setMethod("getDefinition", "taxonomyReportDB", function(x, id, type) {
   unlist(.getDefinition(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -149,7 +155,7 @@ setMethod("getDefinition", "taxonomyReportDB", function (x, id, type) {
                                     as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitLen", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHitLen", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHitLen(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -158,7 +164,7 @@ setMethod("getHitLen", "taxonomyReportDB", function (x, id, type) {
                                 as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHspID", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHspID", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHspID(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -168,7 +174,7 @@ setMethod("getHspID", "taxonomyReportDB", function (x, id, type) {
                                  as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHspNum", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHspNum", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHspNum(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -178,8 +184,8 @@ setMethod("getHspNum", "taxonomyReportDB", function (x, id, type) {
                                    as = 'numeric')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getBitscore", "taxonomyReportDB", function (x, id, type) {
-  unlist(.getBitscore(x, getHitID(x,id,type), 'hit_id'))
+setMethod("getBitscore", "taxonomyReportDB", function(x, id, type) {
+  unlist(.getBitscore(x, getHitID(x, id, type), 'hit_id'))
 })
 
 
@@ -188,7 +194,7 @@ setMethod("getBitscore", "taxonomyReportDB", function (x, id, type) {
                                 as = 'numeric')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getScore", "taxonomyReportDB", function (x, id, type) {
+setMethod("getScore", "taxonomyReportDB", function(x, id, type) {
   unlist(.getScore(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -198,7 +204,7 @@ setMethod("getScore", "taxonomyReportDB", function (x, id, type) {
                                  as = 'numeric')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getEvalue", "taxonomyReportDB", function (x, id, type) {
+setMethod("getEvalue", "taxonomyReportDB", function(x, id, type) {
   unlist(.getEvalue(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -207,7 +213,7 @@ setMethod("getEvalue", "taxonomyReportDB", function (x, id, type) {
                                     as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getQueryFrom", "taxonomyReportDB", function (x, id, type) {
+setMethod("getQueryFrom", "taxonomyReportDB", function(x, id, type) {
   unlist(.getQueryFrom(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -217,7 +223,7 @@ setMethod("getQueryFrom", "taxonomyReportDB", function (x, id, type) {
                                   as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getQueryTo", "taxonomyReportDB", function (x, id, type) {
+setMethod("getQueryTo", "taxonomyReportDB", function(x, id, type) {
   unlist(.getQueryTo(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -227,7 +233,7 @@ setMethod("getQueryTo", "taxonomyReportDB", function (x, id, type) {
                                   as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitFrom", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHitFrom", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHitFrom(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -237,7 +243,7 @@ setMethod("getHitFrom", "taxonomyReportDB", function (x, id, type) {
                                 as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitTo", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHitTo", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHitTo(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -247,7 +253,7 @@ setMethod("getHitTo", "taxonomyReportDB", function (x, id, type) {
                                      as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getQueryFrame", "taxonomyReportDB", function (x, id, type) {
+setMethod("getQueryFrame", "taxonomyReportDB", function(x, id, type) {
   unlist(.getQueryFrame(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -258,7 +264,7 @@ setMethod("getQueryFrame", "taxonomyReportDB", function (x, id, type) {
 
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitFrame", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHitFrame", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHitFrame(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -268,7 +274,7 @@ setMethod("getHitFrame", "taxonomyReportDB", function (x, id, type) {
                                    as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getIdentity", "taxonomyReportDB", function (x, id, type) {
+setMethod("getIdentity", "taxonomyReportDB", function(x, id, type) {
   unlist(.getIdentity(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -278,7 +284,7 @@ setMethod("getIdentity", "taxonomyReportDB", function (x, id, type) {
                                    as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getPositive", "taxonomyReportDB", function (x, id, type) {
+setMethod("getPositive", "taxonomyReportDB", function(x, id, type) {
   unlist(.getPositive(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -288,7 +294,7 @@ setMethod("getPositive", "taxonomyReportDB", function (x, id, type) {
                                as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getGaps", "taxonomyReportDB", function (x, id, type) {
+setMethod("getGaps", "taxonomyReportDB", function(x, id, type) {
   unlist(.getGaps(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -298,7 +304,7 @@ setMethod("getGaps", "taxonomyReportDB", function (x, id, type) {
                                    as = 'integer')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getAlignLen", "taxonomyReportDB", function (x, id, type) {
+setMethod("getAlignLen", "taxonomyReportDB", function(x, id, type) {
   unlist(.getAlignLen(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -308,7 +314,7 @@ setMethod("getAlignLen", "taxonomyReportDB", function (x, id, type) {
                                    as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getQuerySeq", "taxonomyReportDB", function (x, id, type) {
+setMethod("getQuerySeq", "taxonomyReportDB", function(x, id, type) {
   unlist(.getQuerySeq(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -318,7 +324,7 @@ setMethod("getQuerySeq", "taxonomyReportDB", function (x, id, type) {
                                  as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getHitSeq", "taxonomyReportDB", function (x, id, type) {
+setMethod("getHitSeq", "taxonomyReportDB", function(x, id, type) {
   unlist(.getHitSeq(x, getHitID(x, id, type), 'hit_id'))
 })
 
@@ -328,6 +334,6 @@ setMethod("getHitSeq", "taxonomyReportDB", function (x, id, type) {
                                 as = 'character')
 #'@rdname taxonomyReportDB-getter
 #'@export
-setMethod("getMatch", "taxonomyReportDB", function (x, id, type) {
+setMethod("getMatch", "taxonomyReportDB", function(x, id, type) {
   unlist(.getMatch(x, getHitID(x, id, type), 'hit_id'))
 })
