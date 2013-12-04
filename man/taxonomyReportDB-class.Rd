@@ -1,14 +1,49 @@
-\name{taxonomyReportDB-class}
-\alias{createTaxonomyReportDB}
+\name{generate.BlastReport}
+\alias{generate.BlastReport}
+\alias{generate.TaxonomyReport}
 \alias{show}
 \alias{show,taxonomyReportDB-method}
+\alias{taxonomyReportDB}
 \alias{taxonomyReportDB-class}
 \alias{taxonomyReportDBConnect}
 \title{taxonomyReportDB-class}
 \usage{
-  taxonomyReportDBConnect(db_path)
+  generate.BlastReport(fastq, chunksize = 1000,
+    db = "16SMicrobial", max_hits = 25, evalue = 1e-06,
+    perc_identity = 90, n.threads = NULL)
 
-  createTaxonomyReportDB(blast_db,taxonomy_table)
+  generate.TaxonomyReport(blast_db_path, taxon_db_path,
+    chunksize = 1000, coverage_threshold = 0.5,
+    bitscore_tolerance = 0.98,
+    ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+    ...)
+
+  taxonomyReportDB(blast_db, taxon_db_path = "",
+    coverage_threshold = 0.5, bitscore_tolerance = 0.98,
+    ranks = c("species", "genus", "tribe", "family",
+    "order", "class", "phylum", "kingdom", "superkingdom"),
+    .progress = "text")
+
+  taxonomyReportDBConnect(db_path)
+}
+\arguments{
+  \item{blst_db}{A \code{\link[blastr]{blastReportDB}}
+  object.}
+
+  \item{taxon_db_path}{Path to a \code{taxonomyReportDB}.
+  This can be an existing database file where new rows will
+  be appended, or a database is created from scratch.}
+
+  \item{coverage_threshold}{threshold for the selection of
+  hits}
+
+  \item{bitscore_tolerance}{tolerance value for the
+  selection of hsps.}
+
+  \item{ranks}{vector of taxonomic ranks along which the
+  least common ancestor. is determined.}
+
+  \item{.progress}{}
 }
 \value{
   A \code{\linkS4class{taxonomyReportDB}} object.
@@ -16,8 +51,8 @@
 \description{
   \sQuote{\code{taxonomyReportDB}} is an S4 class that
   represents a connection to an SQLite database holding
-  blast records and taxonomical classifications organised
-  in four tables:
+  blast records and taxonomic classifications organised in
+  four tables:
 }
 \details{
   \bold{query} with fields:
@@ -46,8 +81,7 @@
 
   \bold{taxonomy} with fields:
 
-  \itemize{ \item query_id INTEGER \item hit_id INTEGER
-  Primary key \item gene_id TEXT \item accession TEXT \item
+  \itemize{ \item query_id INTEGE^R Primary key \item
   tax_id TEXT \item scientific_name TEXT \item rank TEXT }
 }
 

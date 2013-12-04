@@ -30,18 +30,19 @@
 \alias{getQueryTo}
 \alias{getRank}
 \alias{getScientificName}
+\alias{getScore}
 \alias{getTaxID}
 \alias{getTaxon}
-\title{Getters for taxonomyReportDB}
+\title{Getter for taxonomyReportDB}
 \arguments{
-  \item{x}{A \code{taxonomyReportDB} object.}
+  \item{x}{a \code{taxonomyReportDB} object.}
 
-  \item{id}{An identifier}
+  \item{id}{an identifier}
 
-  \item{type}{Type of identifier. One of \sQuote{tax_id},
+  \item{type}{type of identifier. One of \sQuote{tax_id},
   \sQuote{query_id}, or \sQuote{hit_id}.}
 }
 \description{
-  Getters for taxonomyReportDB
+  Getter for taxonomyReportDB
 }
 

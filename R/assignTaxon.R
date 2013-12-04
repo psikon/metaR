@@ -1,81 +1,116 @@
-#' assign Taxon(s) to a blast query
-#'
-#'@description This algorithm filter the hits of a query under a number of conditions, to
-#'remove false annotations from the query.
-#'
-#'First all hit(s) of a blast query with a specific query coverage (default: >=50\%) will be selected.
-#'The corresponding hsp(s) are determined and a tolerance, based on the bitscore will be calculated 
-#'(default: best bitscore * 98\%= tolerance). All hsp(s) within this tollerance will be selected 
-#'for further processing and the rest discarded. Afterwards the number of hit(s) will be
-#'adjusted. For these remaining hit(s) the least common ancestor will be seeked.
-#'
-#'
-#'@param query_id 1:n \emph{query_id(s)} from \code{blastReportDB} object 
-#'@param bitscore_tolerance tolerance value for the selection of hsp(s)
-#'@param coverage_threshold threshold for the selection of hit(s)
-#'@param taxRanks vector of defined taxonomic ranks
-#'@param blast_db \code{blastReportDB} object
-#'@param taxon_db \code{taxon_db} object
-#'
-#'@return data.frame 
-#'
-#'@importFrom rmisc compact
-#'@importFrom blastr getQueryCoverage
-#'@importFrom blastr getHitID
-#'@importFrom plyr llply
-#'
-#'@seealso \code{\link{LCA}}
-#'
-#'@rdname assignTaxon
-#'@name assignTaxon
-#'
-#'@export
-assignTaxon <- function (query_id,
-                         bitscore_tolerance = 0.98,
-                         coverage_threshold = 0.5,
-                         taxRanks = c("species", "genus", "tribe", "family", "order",
-                                      "class", "phylum", "kingdom", "superkingdom"),
-                         blastReportDB,
-                         taxon_db)
-{
-  # make the function accessable for 1:n query_id(s)
-  ans <- llply(query_id, .assignTaxon, bitscore_tolerance = bitscore_tolerance,
-                coverage_threshold = coverage_threshold, taxRanks = taxRanks, 
-               blastReportDB = blastReportDB, taxon_db = taxon_db,.progress = "text")
-  # remove entries with NA
-  ans <- compact(ans)
-  # convert to data.frame
-  do.call('rbind', ans)
+##
+##' @keywords internal
+.fetch_hits <- function(blast_db, id, idx = NULL, what = "*", ...) {
+  range <- paste0(id, collapse=",")
+  res <- db_query(blast_db , paste("select", what, "from hit where query_id in (", range, ")"), ...)
+  sres <- split.data.frame(res, as.factor(res$query_id))
+  if (!is.null(idx)) {
+    assert_that(length(sres) == length(idx))
+    sres <- .mapply(function(x, i) x[i, ], list(x = sres, i = idx), NULL)
+  }
+  sres[vapply(sres, nrow, 1) != 0]
 }
 
-.assignTaxon <- function (query_id,
-                          bitscore_tolerance = 0.98,
-                          coverage_threshold = 0.5,
-                          taxRanks = c("species", "genus", "tribe", "family", "order",
-                                       "class", "phylum", "kingdom", "superkingdom"),
-                          blastReportDB,
-                          taxon_db)
-{
+
+##' @keywords internal
+## returns all hsps matching a specific query_id and hit_id or NA
+.filter_hsps <- function(blast_db, hits, bitscore_tolerance, ...) {
+  lapply(hits, function(h) {
+    qid <- unique(h$query_id)
+    hid <- paste0(h$hit_id, collapse=",")
+    stmt <- paste0("select query_id, hit_id, bit_score from hsp where query_id = ", qid, " AND hit_id in (", hid, ") ")
+    hsps <- db_query(blast_db, stmt, ...)
+    # get all hsps for which bit_score >= tolerance threshold
+    hsps <- hsps[hsps$bit_score >= max(hsps$bit_score)*bitscore_tolerance, ]
+    # make sure they are sorted by bit_score
+    hsps <- arrange(hsps, desc(hsps$bit_score))
+    # remove duplicates
+    hsps[!duplicated(hsps$hit_id), ]
+  })
+}
+
+##' @keywords internal
+## after filtering of the hsp(s) the hit(s) have to be adjusted to prevent hit(s) without hsp(s)
+.compact_hits <- function(hits, hsps) {
+  hits <- do.call('rbind', hits)
+  hsps <- do.call('rbind', hsps)
+  hits <- hits[hits$hit_id %in% hsps$hit_id, ]
+  row.names(hits) <- NULL
+  unname(split.data.frame(hits, as.factor(hits$query_id)))
+}
+
+##' @keywords internal
+.assignTaxa <- function(
+  blast_db,
+  query_id,
+  coverage_threshold = 0.5,
+  bitscore_tolerance = 0.98,
+  ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+  .unique = TRUE,
+  log = NULL
+) {
   # filter hits for query coverage
-  coverage_threshold_idx <- which(blastr::getQueryCoverage(blastReportDB, query_id) >= coverage_threshold)
-  candidate_hits <- .getHit(blastReportDB, query_id)[coverage_threshold_idx, ]
-  if (nrow(candidate_hits) >= 1) {
-    # get the hsp(s) of the hit(s)
-    candidate_hsps <- .getSelectedHits(blastReportDB, query_id, getHitID(blastReportDB, query_id)[coverage_threshold_idx])
-    # filter the hsp(s) basing on tolerance threshold
-    candidate_hsps <- .filterHsp(candidate_hsps, perc = bitscore_tolerance)
-    # remove hit(s) without hsp(s)
-    candidate_hits <- .reduceHitsFromHsps(candidate_hits, candidate_hsps)
-    # reset row numbers
-    row.names(candidate_hits) <- NULL
-    # find the least common ancestor
-    if (nrow(candidate_hits)!=0) {
-      LCA(query_table=candidate_hits, taxon_db, taxRanks)
-    } else {
-      NULL
-    } 
+  cvg_idx <- NULL
+  if (coverage_threshold > 0) {
+    message(" -- Filtering by query coverage")
+    cvg <- compactEmpty(getQueryCoverage(blast_db, id=query_id, log=log))
+    cvg_idx <- lapply(cvg, function(cvg) which(cvg>=coverage_threshold))
+  }
+  hits <- .fetch_hits(blast_db, id=query_id, idx=cvg_idx, "query_id, hit_id, gene_id", log=log)
+  # filter hsps basing on tolerance threshold
+  message(" -- Filtering by bit score")
+  hsps <- .filter_hsps(blast_db, hits, bitscore_tolerance, log=log)
+  hits <- .compact_hits(hits, hsps)
+  message(" -- Searching for least common ancestors")
+  ans <- LCA.apply(hits, ranks, log=log)
+  if (.unique) {
+    hits <- ans$hit_id
+    ans$hit_id <- NULL
+    ans <- unique.data.frame(ans)
+    row.names(ans) <- NULL
+    attr(ans, "hits") <- hits
+    ans
   } else {
-    NULL
+    ans
   }
 }
+
+#' Assign Taxa to Blast queries.
+#'
+#' @description This algorithm selects Blast hits based on a series of conditions
+#' to improve the taxonomic assignment to a query sequence.
+#' 
+#' First only hits for a query with a query coverage above \code{coverage_threshold} (default: >= 50\%)
+#' will be retained. Next, for all remaining hits only hsps are retained with a bitscore within a
+#' lower bound defined by the overall maximum bitscore * \code{bitscore_tolerance} (default: 0.98).
+#' Hits with no remaining hsps are discarded, and for the remaining hits the least common ancestor
+#' \code{\link{LCA}} is determined.
+#'
+#' @param blast_db A \code{\link[blastr]{blastReportDB}} object.
+#' @param coverage_threshold threshold for the selection of hits
+#' @param bitscore_tolerance tolerance value for the selection of hsps
+#' @param query_id Indices of \emph{query_id}s to annotate (default: all query_ids
+#' in \code{blast_db}). 
+#' @param ranks vector of taxonomic ranks along which the least common ancestor
+#' is determined.
+#' @param ...
+#' @return A \code{data.frame} 
+#' @seealso \code{\link{LCA}}
+#' @rdname assignTaxa
+#' @name assignTaxa
+#' @export
+assignTaxa <- function(blast_db, coverage_threshold = 0.5, bitscore_tolerance = 0.98,
+                        query_id = NULL, ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+                        ...) {
+  assert_that(coverage_threshold >= 0, coverage_threshold <= 1)
+  assert_that(bitscore_tolerance > 0, bitscore_tolerance <= 1)
+  dots <- list(...)
+  log <- dots$log
+  .unique <- dots$.unique %||% TRUE
+  if (is.null(query_id)) {
+    query_id <- getQueryID(blast_db, log=log)
+  }
+  .assignTaxa(blast_db, query_id, coverage_threshold, bitscore_tolerance, ranks, .unique, log)
+}
+
 

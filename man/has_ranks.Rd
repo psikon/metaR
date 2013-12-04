@@ -1,6 +1,6 @@
 \name{has_ranks}
 \alias{has_ranks}
-\title{check ranks of taxon(s) against reference}
+\title{Check ranks of taxa against a reference}
 \arguments{
   \item{x}{taxon object}
 
@@ -10,6 +10,6 @@
   A logical.
 }
 \description{
-  check ranks of taxon(s) against reference
+  Check ranks of taxa against a reference
 }
 
