@@ -2,7 +2,7 @@
 \alias{nunique}
 \title{Number of unique elements in a vector.}
 \usage{
-  nunique(x, ...)
+nunique(x, ...)
 }
 \arguments{
   \item{x}{vector}
@@ -10,7 +10,7 @@
   \item{...}{passed to \code{\link{unique}}}
 }
 \description{
-  A wrapper around \code{length(unique(x))}
+A wrapper around \code{length(unique(x))}
 }
 \keyword{internal}
 

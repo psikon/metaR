@@ -61,7 +61,7 @@ NULL
 #' \bold{taxonomy} with fields:
 #'
 #' \itemize{
-#'    \item query_id         INTEGE^R    Primary key
+#'    \item query_id         INTEGER    Primary key
 #'    \item tax_id           TEXT
 #'    \item scientific_name  TEXT
 #'    \item rank             TEXT
@@ -73,6 +73,7 @@ NULL
 NULL
 .taxonomyReportDB <- setRefClass(
   Class='taxonomyReportDB',
+  fields=list(metadata = 'list'),
   contains='blastReportDB',
   methods=list(
     initialize=function(...) {
@@ -80,6 +81,7 @@ NULL
       if (!.con %has_tables% "taxonomy") {
         createTable(.con, 'taxonomy', taxonomy_db.sql())
       }
+      metadata <<- list()
     })
 )
 
@@ -110,6 +112,32 @@ setMethod('show', 'taxonomyReportDB',
                               db_count(object, "taxonomy"))
             cat(showme, sep="\n")
           })
+
+
+
+#' Access metadata
+#' 
+#' @rdname metadata-methods
+#' @export
+#' @docType methods
+setGeneric("metadata", function(x, ...) standardGeneric("metadata"))
+#' @aliases metadata,taxonomyReportDB-method
+#' @rdname metadata-methods
+setMethod("metadata", "taxonomyReportDB", function(x) x$metadata)
+
+#' @name Access metadata
+#' @rdname metadata-methods
+#' @export
+#' @docType methods
+setGeneric("metadata<-", function(x, value, ...) standardGeneric("metadata<-"))
+
+#' @name Access metadata
+#' @aliases metadata<-,taxonomyReportDB-method
+#' @rdname metadata-methods
+setReplaceMethod("metadata", "taxonomyReportDB", function(x, value) {
+  x$metadata <- value
+  x
+})
 
 
 #' @usage taxonomyReportDB(blast_db, taxon_db_path = "", coverage_threshold = 0.5,

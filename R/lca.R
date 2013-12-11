@@ -36,7 +36,7 @@ LCA <- function(
     hits %has_name% 'gene_id'
   )
   # check the ranks for valid ncbi rank designations
-  ncbi_ranks <- ncbi::.ncbi_taxon_ranks()
+  ncbi_ranks <- ncbi:::.ranks
   if (!all(ranks %in% ncbi_ranks)) {
     stop("'ranks' must be of ", sQuote(paste0(ncbi_ranks[-c(1, length(ncbi_ranks))], collapse=', ')))
   }

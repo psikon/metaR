@@ -15,6 +15,30 @@ setGeneric("getTaxon", function (x, ...) standardGeneric("getTaxon"))
 
 #'@rdname taxonomyReportDB-getter
 #'@export
+setGeneric("getScientificName")
+
+#'@rdname taxonomyReportDB-getter
+#'@export
+setGeneric("getTaxID")
+
+#'@rdname taxonomyReportDB-getter
+#'@export
+setGeneric("getParentTaxID")
+
+#'@rdname taxonomyReportDB-getter
+#'@export
+setGeneric("getRank")
+
+#'@rdname taxonomyReportDB-getter
+#'@export
+setGeneric("getOtherName")
+
+#'@rdname taxonomyReportDB-getter
+#'@export
+setGeneric("getLineage")
+
+#'@rdname taxonomyReportDB-getter
+#'@export
 setGeneric("getDefinition", function (x, ...) standardGeneric("getDefinition"))
 
 setGeneric("getKeggID", function (x, ...) standardGeneric("getKeggID"))
