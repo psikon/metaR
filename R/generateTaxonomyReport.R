@@ -20,8 +20,7 @@ taxonomyReportDB.generator <- function(
 ) {
   assert_that(coverage_threshold > 0, coverage_threshold <= 1)
   assert_that(bitscore_tolerance > 0, bitscore_tolerance <= 1)
-  txndb <- .taxonomyReportDB(conn(blastReportDB(db_path=taxon_db_path)),
-                             metadata)
+  txndb <- .taxonomyReportDB(conn(blastReportDB(db_path=taxon_db_path)), metadata = metadata)
   
   chunkify <- function(log, chunkid) {
     if (!is.null(log)) {
@@ -85,7 +84,8 @@ generate.TaxonomyReport <- function(blast_db_path,
   verbose <- list(...)$verbose %||% TRUE
   blstdb <- blastReportDBConnect(db_path=blast_db_path)
   streamer <- blastReportStream.generator(blstdb, chunksize, log=log)
-  assigner <- taxonomyReportDB.generator(metadata, taxon_db_path, 
+  assigner <- taxonomyReportDB.generator(metadata,
+                                         taxon_db_path, 
                                          coverage_threshold, 
                                          bitscore_tolerance, 
                                          ranks, log = log)
