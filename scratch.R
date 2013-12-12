@@ -15,3 +15,4 @@ taxonomy <- taxonomyReportDBConnect(db_path="taxonomy.db")
 
 
 
+ncbi::.ncbi_taxon_ranks()

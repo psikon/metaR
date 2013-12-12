@@ -73,15 +73,15 @@ NULL
 NULL
 .taxonomyReportDB <- setRefClass(
   Class='taxonomyReportDB',
-  fields=list(metadata = 'list'),
+  fields=list(.metadata = 'list'),
   contains='blastReportDB',
   methods=list(
-    initialize=function(...) {
+    initialize=function(..., metadata) {
       callSuper(...)
       if (!.con %has_tables% "taxonomy") {
         createTable(.con, 'taxonomy', taxonomy_db.sql())
       }
-      metadata <<- list()
+      .metadata <<- metadata
     })
 )
 
@@ -95,6 +95,9 @@ setValidity('taxonomyReportDB', function(object) {
   }
   if (!all(c("query_id", "tax_id", "scientific_name", "rank") %in% dbListFields(conn(object), "taxonomy"))) {
     errors <- c(errors, "Fields missing from table 'taxonomy'")
+  }
+  if (is.null(metadata(object)) || !nzchar(metadata(object)$SampleId)) {
+    errors <- c(errors, "'SampleId' required in the metadata field")
   }
   if (length(errors) == 0L) TRUE else errors
 }) 
@@ -123,7 +126,7 @@ setMethod('show', 'taxonomyReportDB',
 setGeneric("metadata", function(x, ...) standardGeneric("metadata"))
 #' @aliases metadata,taxonomyReportDB-method
 #' @rdname metadata-methods
-setMethod("metadata", "taxonomyReportDB", function(x) x$metadata)
+setMethod("metadata", "taxonomyReportDB", function(x) x$.metadata)
 
 #' @name Access metadata
 #' @rdname metadata-methods
@@ -135,7 +138,8 @@ setGeneric("metadata<-", function(x, value, ...) standardGeneric("metadata<-"))
 #' @aliases metadata<-,taxonomyReportDB-method
 #' @rdname metadata-methods
 setReplaceMethod("metadata", "taxonomyReportDB", function(x, value) {
-  x$metadata <- value
+  x$.metadata <- value
+  validObject(x)
   x
 })
 
@@ -155,15 +159,25 @@ setReplaceMethod("metadata", "taxonomyReportDB", function(x, value) {
 #' @export
 taxonomyReportDB <- function(
   blast_db_path,
+  metadata,
   taxon_db_path = "",
   coverage_threshold = 0.5,
   bitscore_tolerance = 0.98,
-  ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom")
+  ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom")
 ) {
+  if (missing(metadata)) {
+    stop("Must provide a metadata list containing the SampleId")
+  }
+  if (!is.list(metadata) || is.null(metadata$SampleId) || !nzchar(metadata$SampleId)) {
+    stop("The metadata field must be a list containing at least 'SampleId'")
+  }
   # try to connect to an existing taxonomy database or, if this fails,
   # create a blastReportDB and attach the 'taxonomy' table to it  
   if (is.null(tryCatch(txndb <- taxonomyReportDBConnect(taxon_db_path), error=function(e) NULL))) {
-    txndb <- .taxonomyReportDB(conn(blastReportDB(db_path = taxon_db_path)))
+    txndb <- .taxonomyReportDB(
+      conn(blastReportDB(db_path = taxon_db_path)),
+      metadata = metadata
+    )
   }
   if (missing(blast_db_path)) {
     return(txndb)
