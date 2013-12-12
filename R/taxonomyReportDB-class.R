@@ -218,14 +218,15 @@ taxonomyReportDB <- function(
 #' @return A \code{\linkS4class{taxonomyReportDB}} object.
 #' @rdname taxonomyReportDB-class
 #' @export
-taxonomyReportDBConnect <- function(db_path) {
+taxonomyReportDBConnect <- function(db_path, metadata) {
   if (db_path == ":memory:") {
     stop("Cannot connect to an in-memory database", call.=FALSE)
   }
   if (db_path == "") {
     stop("Cannot connect to a temporary database", call.=FALSE)
   }
-  db <- .taxonomyReportDB(db_connect(db_path))
+  db <- .taxonomyReportDB(db_connect(db_path), 
+                          metadata = metadata)
   validObject(db)
   db
 }
