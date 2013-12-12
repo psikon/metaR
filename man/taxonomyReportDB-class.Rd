@@ -13,7 +13,7 @@ generate.BlastReport(fastq, chunksize = 1000, db = "16SMicrobial",
 
 generate.TaxonomyReport(blast_db_path, metadata, taxon_db_path,
   chunksize = 1000, coverage_threshold = 0.5, bitscore_tolerance = 0.98,
-  ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum",
+  ranks = c("species", "genus", "family", "order", "class", "phylum",
   "kingdom", "superkingdom"), ...)
 
 \S4method{show}{taxonomyReportDB}(object)
