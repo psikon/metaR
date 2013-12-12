@@ -11,8 +11,8 @@
 generate.BlastReport(fastq, chunksize = 1000, db = "16SMicrobial",
   max_hits = 25, evalue = 1e-06, perc_identity = 90, n.threads = NULL)
 
-generate.TaxonomyReport(blast_db_path, taxon_db_path, chunksize = 1000,
-  coverage_threshold = 0.5, bitscore_tolerance = 0.98,
+generate.TaxonomyReport(blast_db_path, metadata, taxon_db_path,
+  chunksize = 1000, coverage_threshold = 0.5, bitscore_tolerance = 0.98,
   ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum",
   "kingdom", "superkingdom"), ...)
 

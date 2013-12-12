@@ -3,7 +3,7 @@
 \title{Generate a taxon assigner}
 \usage{
 taxonomyReportDB.generator(blast_db_path, taxonomy_db_path = NULL, coverage_threshold = 0.5,
-bitscore_tolerance = 0.98, ranks = c("species", "genus", "tribe", "family", "order",
+bitscore_tolerance = 0.98, ranks = c("species", "genus", "family", "order",
 "class", "phylum", "kingdom", "superkingdom"))
 }
 \arguments{

@@ -1,7 +1,7 @@
 #' Generate a taxon assigner
 #'
 #' @usage taxonomyReportDB.generator(blast_db_path, taxonomy_db_path = NULL, coverage_threshold = 0.5,
-#' bitscore_tolerance = 0.98, ranks = c("species", "genus", "tribe", "family", "order",
+#' bitscore_tolerance = 0.98, ranks = c("species", "genus", "family", "order",
 #' "class", "phylum", "kingdom", "superkingdom"))
 #' @param taxon_db_path
 #' @param coverage_threshold
@@ -14,7 +14,7 @@ taxonomyReportDB.generator <- function(
   taxon_db_path = tempfile(pattern="taxondb", fileext=".db"),
   coverage_threshold = 0.5,
   bitscore_tolerance = 0.98,
-  ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+  ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
   log = NULL
 ) {
   assert_that(coverage_threshold > 0, coverage_threshold <= 1)
@@ -72,6 +72,7 @@ taxonomyReportDB.generator <- function(
 #' @rdname taxonomyReportDB-class
 #' @export
 generate.TaxonomyReport <- function(blast_db_path,
+                                    metadata,
                                     taxon_db_path,
                                     chunksize = 1000,
                                     coverage_threshold = 0.5,
