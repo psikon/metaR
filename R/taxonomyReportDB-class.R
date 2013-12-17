@@ -173,7 +173,8 @@ taxonomyReportDB <- function(
   }
   # try to connect to an existing taxonomy database or, if this fails,
   # create a blastReportDB and attach the 'taxonomy' table to it  
-  if (is.null(tryCatch(txndb <- taxonomyReportDBConnect(taxon_db_path), error=function(e) NULL))) {
+  if (is.null(tryCatch(txndb <- taxonomyReportDBConnect(taxon_db_path, metadata), 
+                       error=function(e) NULL))) {
     txndb <- .taxonomyReportDB(
       conn(blastReportDB(db_path = taxon_db_path)),
       metadata = metadata
@@ -186,9 +187,11 @@ taxonomyReportDB <- function(
   ## Assign Taxa to a Blast queries
   message(' -- Assigning Taxa')
   query_id <- getQueryID(blstdb)
-  txndf <- .assignTaxa(blast_db=blstdb, query_id=query_id, coverage_threshold=coverage_threshold,
-                       bitscore_tolerance=bitscore_tolerance, ranks=ranks, .unique=TRUE)
-  hit_range <- paste0(attr(txndf, "hits"), collapse=",")
+  txndf <- .assignTaxa(blast_db = blstdb, query_id = query_id, 
+                       coverage_threshold = coverage_threshold,
+                       bitscore_tolerance = bitscore_tolerance, 
+                       ranks = ranks, .unique = TRUE)
+  hit_range <- paste0(attr(txndf, "hits"), collapse = ",")
   
   message(" -- Updating hit table")
   hitdf <- db_query(blstdb, paste0('select * from hit where hit_id in (', hit_range, ')'))
@@ -214,7 +217,7 @@ taxonomyReportDB <- function(
 }
 
 
-#' @usage taxonomyReportDBConnect(db_path)
+#' @usage taxonomyReportDBConnect(db_path, metadata)
 #' @return A \code{\linkS4class{taxonomyReportDB}} object.
 #' @rdname taxonomyReportDB-class
 #' @export

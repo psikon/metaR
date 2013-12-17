@@ -27,20 +27,20 @@ createKronaFile <- function(taxonomyReportDB, output, taxon_db) {
 #' extract from the blast db the blast tabular output 
 #'
 #'@description extract 12 fields from the blast db:
-#'
-#'\item query_def
-#'\item subject id (example: gi|350280512|gb|JF719726.1|)
-#'\item perc_identity
-#'\item align_len
-#'\item mismatches
-#'\item gap opens
-#'\item query_from
-#'\item query_to
-#'\item hit_from
-#'\item hit_to
-#'\item evalue
-#'\item bitscore
-#'
+#'\itemize{
+#'  \item query_def
+#'  \item subject id (example: gi|350280512|gb|JF719726.1|)
+#'  \item perc_identity
+#'  \item align_len
+#'  \item mismatches
+#'  \item gap opens
+#'  \item query_from
+#'  \item query_to
+#'  \item hit_from
+#'  \item hit_to
+#'  \item evalue
+#'  \item bitscore
+#'}
 #'
 blastXML_to_tab <- function(blastReportDB, output, taxon_db) {
   

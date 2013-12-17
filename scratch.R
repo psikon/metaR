@@ -7,10 +7,18 @@ document(pkg = ".",clean = T)
 Sys.setenv("PKG_CXXFLAGS" = "-std=c++11")
 
 # connection herstellen
+metadata64 <- list(
+  SampleId = 64, SampleName = "Sample64",
+  Location = "Jakarta Bay, Indonesia", Host = "Epinephelus fuscoguttatus",
+  Environment = "free living", Description = "fecal sample"
+)
 blastReport <- blastReportDBConnect("../blast.test.db")
-#taxDB <- connectTaxonDB("/home/psehnert/daten/metagenomics/scripts/metpipe/program/db")
-taxDB <- connectTaxonDB("../")
+generate.TaxonomyReport(blast_db_path = "../blast.test.db",
+                        metadata = metadata64,
+                        taxon_db_path = "../test.db",
+                        bitscore_tolerance = 0.90)
+test <- taxonomyReportDBConnect("../taxonomy.db",metadata64)
 
-taxonomy <- taxonomyReportDBConnect(db_path="taxonomy.db")
+
 
 

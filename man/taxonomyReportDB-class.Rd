@@ -22,7 +22,7 @@ taxonomyReportDB(blast_db, taxon_db_path = "", coverage_threshold = 0.5,
 bitscore_tolerance = 0.98, ranks = c("species", "genus", "tribe", "family", "order",
 "class", "phylum", "kingdom", "superkingdom"), .progress = "text")
 
-taxonomyReportDBConnect(db_path)
+taxonomyReportDBConnect(db_path, metadata)
 }
 \arguments{
   \item{blst_db}{A \code{\link[blastr]{blastReportDB}}

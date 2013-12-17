@@ -90,7 +90,7 @@ generate.TaxonomyReport <- function(blast_db_path,
                                          bitscore_tolerance, 
                                          ranks, log = log)
   processChunks(streamer, assigner, nb.parallel.jobs=1)
-  txndb <- taxonomyReportDBConnect(taxon_db_path)
+  txndb <- taxonomyReportDBConnect(taxon_db_path, metadata)
   txndb
 }
 
