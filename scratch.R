@@ -18,7 +18,7 @@ generate.TaxonomyReport(blast_db_path = "../blast.test.db",
                         taxon_db_path = "../test.db",
                         bitscore_tolerance = 0.90)
 test <- taxonomyReportDBConnect("../taxonomy.db",metadata64)
-
+biom_test <- to_biom(db_list=list(test))
 
 
 
