@@ -1,7 +1,7 @@
 ##
 ##' @keywords internal
 .fetch_hits <- function(blast_db, id, idx = NULL, what = "*", ...) {
-  range <- paste0(id, collapse=",")
+  range <- paste0(id, collapse = ",")
   res <- db_query(blast_db , paste("select", what, "from hit where query_id in (", range, ")"), ...)
   sres <- split.data.frame(res, as.factor(res$query_id))
   if (!is.null(idx)) {
@@ -17,7 +17,7 @@
 .filter_hsps <- function(blast_db, hits, bitscore_tolerance, ...) {
   lapply(hits, function(h) {
     qid <- unique(h$query_id)
-    hid <- paste0(h$hit_id, collapse=",")
+    hid <- paste0(h$hit_id, collapse = ",")
     stmt <- paste0("select query_id, hit_id, bit_score from hsp where query_id = ", qid, " AND hit_id in (", hid, ") ")
     hsps <- db_query(blast_db, stmt, ...)
     # get all hsps for which bit_score >= tolerance threshold
@@ -45,7 +45,7 @@
   query_id,
   coverage_threshold = 0.5,
   bitscore_tolerance = 0.98,
-  ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+  ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
   .unique = TRUE,
   log = NULL
 ) {
@@ -53,16 +53,17 @@
   cvg_idx <- NULL
   if (coverage_threshold > 0) {
     message(" -- Filtering by query coverage")
-    cvg <- compactEmpty(getQueryCoverage(blast_db, id=query_id, log=log))
-    cvg_idx <- lapply(cvg, function(cvg) which(cvg>=coverage_threshold))
+    cvg <- compactEmpty(getQueryCoverage(blast_db, id = query_id, log = log))
+    cvg_idx <- lapply(cvg, function(cvg) which(cvg >= coverage_threshold))
   }
-  hits <- .fetch_hits(blast_db, id=query_id, idx=cvg_idx, "query_id, hit_id, gene_id", log=log)
+  hits <- .fetch_hits(blast_db, id = query_id, idx = cvg_idx, 
+                      "query_id, hit_id, gene_id", log = log)
   # filter hsps basing on tolerance threshold
   message(" -- Filtering by bit score")
-  hsps <- .filter_hsps(blast_db, hits, bitscore_tolerance, log=log)
+  hsps <- .filter_hsps(blast_db, hits, bitscore_tolerance, log = log)
   hits <- .compact_hits(hits, hsps)
   message(" -- Searching for least common ancestors")
-  ans <- LCA.apply(hits, ranks, log=log)
+  ans <- LCA.apply(hits, ranks, log = log)
   if (.unique) {
     hits <- ans$hit_id
     ans$hit_id <- NULL
@@ -100,7 +101,7 @@
 #' @name assignTaxa
 #' @export
 assignTaxa <- function(blast_db, coverage_threshold = 0.5, bitscore_tolerance = 0.98,
-                        query_id = NULL, ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+                        query_id = NULL, ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
                         ...) {
   assert_that(coverage_threshold >= 0, coverage_threshold <= 1)
   assert_that(bitscore_tolerance > 0, bitscore_tolerance <= 1)
@@ -108,7 +109,7 @@ assignTaxa <- function(blast_db, coverage_threshold = 0.5, bitscore_tolerance = 
   log <- dots$log
   .unique <- dots$.unique %||% TRUE
   if (is.null(query_id)) {
-    query_id <- getQueryID(blast_db, log=log)
+    query_id <- getQueryID(blast_db, log = log)
   }
   .assignTaxa(blast_db, query_id, coverage_threshold, bitscore_tolerance, ranks, .unique, log)
 }

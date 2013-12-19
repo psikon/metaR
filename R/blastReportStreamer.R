@@ -5,33 +5,33 @@ NULL
 
 .blastReportStreamer <- setRefClass(
   'blastReportStreamer',
-  fields=list(
+  fields = list(
     .con = "blastReportDB",
     cs = "integer",
     q = "numeric",
     nq = "numeric",
     i = "numeric"
   ),
-  methods=list(
-    initialize=function(db, chunksize) {
+  methods = list(
+    initialize = function(db, chunksize) {
       .con <<- db
       cs <<- as.integer(chunksize)
       q <<- as.numeric(db_query(.con, "select query_id from query", 1))
       nq <<- length(q)
       i <<- 1
     },
-    yield=function(..., log = NULL) {
+    yield = function(..., log = NULL) {
       lower_idx <- cs*(i - 1) + 1
       upper_idx <- cs*i
       upper_idx <- ifelse(upper_idx > nq, nq, upper_idx)
       if (lower_idx <= nq) {
         blastr:::do_log(log, "Yield chunk ", i, ":\n")
         db_path <- ":memory:"
-        db <- blastReportDB(db_path=db_path, verbose=FALSE)
+        db <- blastReportDB(db_path = db_path, verbose = FALSE)
         WHERE <- paste("where query_id >=", q[lower_idx], "AND query_id <=", q[upper_idx])
-        db_bulk_insert(db, "query", db_query(.con, paste("select query_id, query_def, query_len from query", WHERE), log=log), log=log)
-        db_bulk_insert(db, "hit", db_query(.con, paste("select * from hit", WHERE), log=log), log=log)
-        db_bulk_insert(db, "hsp", db_query(.con, paste("select * from hsp", WHERE), log=log), log=log)
+        db_bulk_insert(db, "query", db_query(.con, paste("select query_id, query_def, query_len from query", WHERE), log = log), log = log)
+        db_bulk_insert(db, "hit", db_query(.con, paste("select * from hit", WHERE), log = log), log = log)
+        db_bulk_insert(db, "hsp", db_query(.con, paste("select * from hsp", WHERE), log = log), log = log)
         i <<- i + 1
         db
       } else {
@@ -81,8 +81,8 @@ blastReportStream.generator <- function(blastdb, chunksize = 100, log = NULL, ve
 }
 
 
-fastqStream.generator <- function(fastq, chunksize=100, ...) {
-  streamer <- FastqStreamer(con=fastq, n=chunksize, ...)
+fastqStream.generator <- function(fastq, chunksize = 100, ...) {
+  streamer <- FastqStreamer(con = fastq, n = chunksize, ...)
   function() {
     res <- yield(streamer)
     if (length(res) > 0) res else NULL
@@ -114,7 +114,7 @@ processChunks <- function(inext, fun, nb.parallel.jobs) {
     slapply(inext, .fun)
   } else {
     stopifnot(require(parallel))
-    HTSeqGenie::sclapply(inext, .fun, max.parallel.jobs=nb.parallel.jobs)
+    HTSeqGenie::sclapply(inext, .fun, max.parallel.jobs = nb.parallel.jobs)
   }
 }
 
