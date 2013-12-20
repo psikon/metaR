@@ -63,7 +63,7 @@ generate.BlastReport <- function(fastq,
   ## initialise fastqStream
   streamer <- fastqStream.generator(fastq, chunksize)
   on.exit(close(streamer))
-  db.out <- normalizePath(file.path(dirname(fastq), paste0(strip_ext(fastq), "_blast.db"), mustWork=FALSE)
+  db.out <- normalizePath(file.path(dirname(fastq), paste0(strip_ext(fastq), "_blast.db"), mustWork=FALSE))
   
   ## initialise blast handler
   blast.handler <- blastReportDB.generator(db=db, max_hits=max_hits, evalue=evalue,
