@@ -1,15 +1,18 @@
 \name{has_ranks}
 \alias{has_ranks}
 \title{Check ranks of taxa against a reference}
+\usage{
+has_ranks(x, ranks, ...)
+}
 \arguments{
   \item{x}{taxon object}
 
   \item{ranks}{character vector of taxonomical ranks}
 }
 \value{
-  A logical.
+A logical.
 }
 \description{
-  Check ranks of taxa against a reference
+Check ranks of taxa against a reference
 }
 

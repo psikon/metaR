@@ -76,7 +76,7 @@ generate.TaxonomyReport <- function(blast_db_path,
                                     chunksize = 1000,
                                     coverage_threshold = 0.5,
                                     bitscore_tolerance = 0.98,
-                                    ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+                                    ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
                                     ...) {
   log <- list(...)$log
   verbose <- list(...)$verbose %||% TRUE

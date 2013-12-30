@@ -3,7 +3,7 @@
 #' @import methods
 #' @import blastr
 #' @importFrom RSQLite dbListTables dbListFields dbGetQuery
-#' @importFrom assertthat assert_that is.readable not_empty noNA
+#' @importFrom assertthat assert_that is.readable
 NULL
 
 
