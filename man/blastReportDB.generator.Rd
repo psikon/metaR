@@ -14,7 +14,8 @@ perc_identity = 90, n.threads = floor(detectCores()*0.25))
 
   \item{perc_identity}{}
 
-  \item{n.threads}{}
+  \item{num_threads}{Number of threads to use in the BLAST
+  search}
 }
 \value{
 A handler function that can be passed to
