@@ -12,8 +12,8 @@ generate.BlastReport(fastq, chunksize = 1000, db = "16SMicrobial",
   max_hits = 25, evalue = 1e-06, perc_identity = 90,
   num_blast_threads = NULL, num_parallel_jobs = NULL)
 
-generate.TaxonomyReport(blast_db_path, taxon_db_path, chunksize = 1000,
-  coverage_threshold = 0.5, bitscore_tolerance = 0.98,
+generate.TaxonomyReport(blast_db_path, metadata, taxon_db_path,
+  chunksize = 1000, coverage_threshold = 0.5, bitscore_tolerance = 0.98,
   ranks = c("species", "genus", "family", "order", "class", "phylum",
   "kingdom", "superkingdom"), ...)
 
@@ -23,7 +23,7 @@ taxonomyReportDB(blast_db, taxon_db_path = "", coverage_threshold = 0.5,
 bitscore_tolerance = 0.98, ranks = c("species", "genus", "tribe", "family", "order",
 "class", "phylum", "kingdom", "superkingdom"), .progress = "text")
 
-taxonomyReportDBConnect(db_path)
+taxonomyReportDBConnect(db_path, metadata)
 }
 \arguments{
   \item{blst_db}{A \code{\link[blastr]{blastReportDB}}
@@ -81,7 +81,7 @@ INTEGER \item qseq TEXT \item hseq TEXT \item midline TEXT
 
 \bold{taxonomy} with fields:
 
-\itemize{ \item query_id INTEGE^R Primary key \item tax_id
+\itemize{ \item query_id INTEGER Primary key \item tax_id
 TEXT \item scientific_name TEXT \item rank TEXT }
 }
 

@@ -3,8 +3,8 @@
 \title{Assign Taxa to Blast queries.}
 \usage{
 assignTaxa(blast_db, coverage_threshold = 0.5, bitscore_tolerance = 0.98,
-  query_id = NULL, ranks = c("species", "genus", "tribe", "family", "order",
-  "class", "phylum", "kingdom", "superkingdom"), ...)
+  query_id = NULL, ranks = c("species", "genus", "family", "order", "class",
+  "phylum", "kingdom", "superkingdom"), ...)
 }
 \arguments{
   \item{blast_db}{A \code{\link[blastr]{blastReportDB}}

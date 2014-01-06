@@ -18,9 +18,12 @@
 \alias{getHspID,taxonomyReportDB-method}
 \alias{getHspNum,taxonomyReportDB-method}
 \alias{getIdentity,taxonomyReportDB-method}
+\alias{getLineage}
 \alias{getLineage,taxonomyReportDB-method}
 \alias{getMatch,taxonomyReportDB-method}
+\alias{getOtherName}
 \alias{getOtherName,taxonomyReportDB-method}
+\alias{getParentTaxID}
 \alias{getParentTaxID,taxonomyReportDB-method}
 \alias{getPositive,taxonomyReportDB-method}
 \alias{getQueryDef,taxonomyReportDB-method}
@@ -30,15 +33,30 @@
 \alias{getQueryLen,taxonomyReportDB-method}
 \alias{getQuerySeq,taxonomyReportDB-method}
 \alias{getQueryTo,taxonomyReportDB-method}
+\alias{getRank}
 \alias{getRank,taxonomyReportDB-method}
+\alias{getScientificName}
 \alias{getScientificName,taxonomyReportDB-method}
 \alias{getScore,taxonomyReportDB-method}
+\alias{getTaxID}
 \alias{getTaxID,taxonomyReportDB-method}
 \alias{getTaxon}
 \alias{getTaxon,taxonomyReportDB-method}
 \title{Getter for taxonomyReportDB}
 \usage{
 getTaxon(x, ...)
+
+getScientificName(x, ...)
+
+getTaxID(x, ...)
+
+getParentTaxID(x, ...)
+
+getRank(x, ...)
+
+getOtherName(x, ...)
+
+getLineage(x, ...)
 
 getDefinition(x, ...)
 

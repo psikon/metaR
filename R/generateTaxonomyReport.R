@@ -1,7 +1,7 @@
 #' Generate a taxon assigner
 #'
 #' @usage taxonomyReportDB.generator(blast_db_path, taxonomy_db_path = NULL, coverage_threshold = 0.5,
-#' bitscore_tolerance = 0.98, ranks = c("species", "genus", "tribe", "family", "order",
+#' bitscore_tolerance = 0.98, ranks = c("species", "genus", "family", "order",
 #' "class", "phylum", "kingdom", "superkingdom"))
 #' @param taxon_db_path
 #' @param coverage_threshold
@@ -11,15 +11,16 @@
 #' @return A function that can be passed to \code{processChunks}.
 #' @keywords internal
 taxonomyReportDB.generator <- function(
+  metadata,
   taxon_db_path = tempfile(pattern="taxondb", fileext=".db"),
   coverage_threshold = 0.5,
   bitscore_tolerance = 0.98,
-  ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+  ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
   log = NULL
 ) {
   assert_that(coverage_threshold > 0, coverage_threshold <= 1)
   assert_that(bitscore_tolerance > 0, bitscore_tolerance <= 1)
-  txndb <- .taxonomyReportDB(conn(blastReportDB(db_path=taxon_db_path)))
+  txndb <- .taxonomyReportDB(conn(blastReportDB(db_path=taxon_db_path)), metadata = metadata)
   
   chunkify <- function(log, chunkid) {
     if (!is.null(log)) {
@@ -72,6 +73,7 @@ taxonomyReportDB.generator <- function(
 #' @rdname taxonomyReportDB-class
 #' @export
 generate.TaxonomyReport <- function(blast_db_path,
+                                    metadata,
                                     taxon_db_path,
                                     chunksize = 1000,
                                     coverage_threshold = 0.5,
@@ -82,9 +84,13 @@ generate.TaxonomyReport <- function(blast_db_path,
   verbose <- list(...)$verbose %||% TRUE
   blstdb <- blastReportDBConnect(db_path=blast_db_path)
   streamer <- blastReportStream.generator(blstdb, chunksize, log=log)
-  assigner <- taxonomyReportDB.generator(taxon_db_path, coverage_threshold, bitscore_tolerance, ranks, log=log)
+  assigner <- taxonomyReportDB.generator(metadata,
+                                         taxon_db_path, 
+                                         coverage_threshold, 
+                                         bitscore_tolerance, 
+                                         ranks, log = log)
   processChunks(streamer, assigner, nb.parallel.jobs=1)
-  txndb <- taxonomyReportDBConnect(taxon_db_path)
+  txndb <- taxonomyReportDBConnect(taxon_db_path, metadata)
   txndb
 }
 

@@ -61,7 +61,7 @@ NULL
 #' \bold{taxonomy} with fields:
 #'
 #' \itemize{
-#'    \item query_id         INTEGE^R    Primary key
+#'    \item query_id         INTEGER    Primary key
 #'    \item tax_id           TEXT
 #'    \item scientific_name  TEXT
 #'    \item rank             TEXT
@@ -73,13 +73,15 @@ NULL
 NULL
 .taxonomyReportDB <- setRefClass(
   Class='taxonomyReportDB',
+  fields=list(.metadata = 'list'),
   contains='blastReportDB',
   methods=list(
-    initialize=function(...) {
+    initialize=function(..., metadata) {
       callSuper(...)
       if (!.con %has_tables% "taxonomy") {
         createTable(.con, 'taxonomy', taxonomy_db.sql())
       }
+      .metadata <<- metadata
     })
 )
 
@@ -93,6 +95,9 @@ setValidity('taxonomyReportDB', function(object) {
   }
   if (!all(c("query_id", "tax_id", "scientific_name", "rank") %in% dbListFields(conn(object), "taxonomy"))) {
     errors <- c(errors, "Fields missing from table 'taxonomy'")
+  }
+  if (is.null(metadata(object)) || !nzchar(metadata(object)$SampleId)) {
+    errors <- c(errors, "'SampleId' required in the metadata field")
   }
   if (length(errors) == 0L) TRUE else errors
 }) 
@@ -112,6 +117,33 @@ setMethod('show', 'taxonomyReportDB',
           })
 
 
+
+#' Access metadata
+#' 
+#' @rdname metadata-methods
+#' @export
+#' @docType methods
+setGeneric("metadata", function(x, ...) standardGeneric("metadata"))
+#' @aliases metadata,taxonomyReportDB-method
+#' @rdname metadata-methods
+setMethod("metadata", "taxonomyReportDB", function(x) x$.metadata)
+
+#' @name Access metadata
+#' @rdname metadata-methods
+#' @export
+#' @docType methods
+setGeneric("metadata<-", function(x, value, ...) standardGeneric("metadata<-"))
+
+#' @name Access metadata
+#' @aliases metadata<-,taxonomyReportDB-method
+#' @rdname metadata-methods
+setReplaceMethod("metadata", "taxonomyReportDB", function(x, value) {
+  x$.metadata <- value
+  validObject(x)
+  x
+})
+
+
 #' @usage taxonomyReportDB(blast_db, taxon_db_path = "", coverage_threshold = 0.5,
 #' bitscore_tolerance = 0.98, ranks = c("species", "genus", "tribe", "family", "order",
 #' "class", "phylum", "kingdom", "superkingdom"), .progress = "text")
@@ -127,15 +159,26 @@ setMethod('show', 'taxonomyReportDB',
 #' @export
 taxonomyReportDB <- function(
   blast_db_path,
+  metadata,
   taxon_db_path = "",
   coverage_threshold = 0.5,
   bitscore_tolerance = 0.98,
-  ranks = c("species", "genus", "tribe", "family", "order", "class", "phylum", "kingdom", "superkingdom")
+  ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom")
 ) {
+  if (missing(metadata)) {
+    stop("Must provide a metadata list containing the SampleId")
+  }
+  if (!is.list(metadata) || is.null(metadata$SampleId) || !nzchar(metadata$SampleId)) {
+    stop("The metadata field must be a list containing at least 'SampleId'")
+  }
   # try to connect to an existing taxonomy database or, if this fails,
   # create a blastReportDB and attach the 'taxonomy' table to it  
-  if (is.null(tryCatch(txndb <- taxonomyReportDBConnect(taxon_db_path), error=function(e) NULL))) {
-    txndb <- .taxonomyReportDB(conn(blastReportDB(db_path = taxon_db_path)))
+  if (is.null(tryCatch(txndb <- taxonomyReportDBConnect(taxon_db_path, metadata), 
+                       error=function(e) NULL))) {
+    txndb <- .taxonomyReportDB(
+      conn(blastReportDB(db_path = taxon_db_path)),
+      metadata = metadata
+    )
   }
   if (missing(blast_db_path)) {
     return(txndb)
@@ -144,9 +187,11 @@ taxonomyReportDB <- function(
   ## Assign Taxa to a Blast queries
   message(' -- Assigning Taxa')
   query_id <- getQueryID(blstdb)
-  txndf <- .assignTaxa(blast_db=blstdb, query_id=query_id, coverage_threshold=coverage_threshold,
-                       bitscore_tolerance=bitscore_tolerance, ranks=ranks, .unique=TRUE)
-  hit_range <- paste0(attr(txndf, "hits"), collapse=",")
+  txndf <- .assignTaxa(blast_db = blstdb, query_id = query_id, 
+                       coverage_threshold = coverage_threshold,
+                       bitscore_tolerance = bitscore_tolerance, 
+                       ranks = ranks, .unique = TRUE)
+  hit_range <- paste0(attr(txndf, "hits"), collapse = ",")
   
   message(" -- Updating hit table")
   hitdf <- db_query(blstdb, paste0('select * from hit where hit_id in (', hit_range, ')'))
@@ -172,18 +217,19 @@ taxonomyReportDB <- function(
 }
 
 
-#' @usage taxonomyReportDBConnect(db_path)
+#' @usage taxonomyReportDBConnect(db_path, metadata)
 #' @return A \code{\linkS4class{taxonomyReportDB}} object.
 #' @rdname taxonomyReportDB-class
 #' @export
-taxonomyReportDBConnect <- function(db_path) {
+taxonomyReportDBConnect <- function(db_path, metadata) {
   if (db_path == ":memory:") {
     stop("Cannot connect to an in-memory database", call.=FALSE)
   }
   if (db_path == "") {
     stop("Cannot connect to a temporary database", call.=FALSE)
   }
-  db <- .taxonomyReportDB(db_connect(db_path))
+  db <- .taxonomyReportDB(db_connect(db_path), 
+                          metadata = metadata)
   validObject(db)
   db
 }
