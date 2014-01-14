@@ -29,21 +29,6 @@
   })
 }
 
-.filter_best_hsps <- function(blast_db, hits) {
-  lapply(hits, function(h) {
-    qid <- unique(h$query_id)
-    hid <- paste0(h$hit_id, collapse = ",")
-    stmt <- paste0("SELECT query_id, hit_id, bit_score FROM hsp WHERE query_id = ", qid, 
-                   " AND bit_score = (SELECT MAX(bit_score) FROM hsp WHERE query_id = ",qid,")")
-    
-    hsps <- blastr::db_query(blast_db, stmt)
-    # make sure they are sorted by bit_score
-    hsps <- arrange(hsps, desc(hsps$bit_score))
-    # remove duplicates
-    hsps[!duplicated(hsps$hit_id), ]
-  })
-}
-
 ##' @keywords internal
 ## after filtering of the hsp(s) the hit(s) have to be adjusted to prevent hit(s) without hsp(s)
 .compact_hits <- function(hits, hsps) {
@@ -54,22 +39,13 @@
   unname(split.data.frame(hits, as.factor(hits$query_id)))
 }
 
-.assignBestTaxa <- function(blast_db, query_id,
-                            ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom")) {
-  message(" -- Filtering by best hit")
-  hits <- .fetch_hits(conn(blast_db), id = query_id)
-  hsps <- .filter_best_hsps(conn(blast_db), hits) 
-  hits <- .compact_hits(hits, hsps)
-  message(" -- Searching for taxonomy of best hit")
-  
-}
-
 ##' @keywords internal
 .assignTaxa <- function(
   blast_db,
   query_id,
   coverage_threshold = 0.5,
   bitscore_tolerance = 0.98,
+  min_score = 50,
   ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
   .unique = TRUE,
   log = NULL
@@ -79,7 +55,13 @@
   if (coverage_threshold > 0) {
     message(" -- Filtering by query coverage")
     cvg <- compactEmpty(getQueryCoverage(blast_db, id = query_id, log = log))
-    cvg_idx <- lapply(cvg, function(cvg) which(cvg >= coverage_threshold))
+    msc <- compactEmpty(lapply(query_id, function(qid) {
+      stmts <- paste0("select max(score) from hsp where query_id = ", qid, " group by hit_id")
+      db_query(blast_db,stmts,1)
+    }))
+    #cvg_idx <- lapply(cvg, function(cvg) which(cvg >= coverage_threshold)) 
+    cvg_idx <- mapply(function(cvg, msc) {
+      which(cvg >= coverage_threshold | msc >= min_score ) }, cvg, msc)
   }
   hits <- .fetch_hits(blast_db, id = query_id, idx = cvg_idx, 
                       "query_id, hit_id, gene_id", log = log)
@@ -106,10 +88,11 @@
 #' @description This algorithm selects Blast hits based on a series of conditions
 #' to improve the taxonomic assignment to a query sequence.
 #' 
-#' First only hits for a query with a query coverage above \code{coverage_threshold} (default: >= 50\%)
-#' will be retained. Next, for all remaining hits only hsps are retained with a bitscore within a
-#' lower bound defined by the overall maximum bitscore * \code{bitscore_tolerance} (default: 0.98).
-#' Hits with no remaining hsps are discarded, and for the remaining hits the least common ancestor
+#' First only hits for a query with a query coverage above \code{coverage_threshold} (default: >= 50\%) 
+#' or a defined minimum score in one hsp will be retained. Next, for all remaining hits only hsps are 
+#' retained with a bitscore within a lower bound defined by the overall maximum bitscore * 
+#' \code{bitscore_tolerance} (default: 0.98). Hits with no remaining hsps are discarded, and for 
+#' the remaining hits the least common ancestor
 #' \code{\link{LCA}} is determined.
 #'
 #' @param blast_db A \code{\link[blastr]{blastReportDB}} object.
@@ -125,18 +108,19 @@
 #' @rdname assignTaxa
 #' @name assignTaxa
 #' @export
-assignTaxa <- function(blast_db, coverage_threshold = 0.5, bitscore_tolerance = 0.98,
+assignTaxa <- function(blast_db, coverage_threshold = 0.5, bitscore_tolerance = 0.98, min_match = 50,
                         query_id = NULL, ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
                         ...) {
   assert_that(coverage_threshold >= 0, coverage_threshold <= 1)
   assert_that(bitscore_tolerance > 0, bitscore_tolerance <= 1)
+  assert_that(min_match > 0)
   dots <- list(...)
   log <- dots$log
   .unique <- dots$.unique %||% TRUE
   if (is.null(query_id)) {
     query_id <- getQueryID(blast_db, log = log)
   }
-  .assignTaxa(blast_db, query_id, coverage_threshold, bitscore_tolerance, ranks, .unique, log)
+  .assignTaxa(blast_db, query_id, coverage_threshold, bitscore_tolerance, min_match, ranks, .unique, log)
 }
 
 

@@ -290,6 +290,14 @@ setAs("TaxonList", "data.frame", function (from) {
     })
   }
 }
+# copied from rmisc
+rBind <- function (x) {
+  n_col <- length(x[[1L]])
+  col_classes <- vapply(x[[1L]], class, character(1L), USE.NAMES=FALSE)
+  res <- .Call("rmisc_bind_list", x, n_col, col_classes, PACKAGE = "rmisc")
+  attr(res, "row.names") <- seq_len(length(res[[1L]]))
+  res
+}
 
 
 

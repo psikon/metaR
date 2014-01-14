@@ -15,6 +15,7 @@ taxonomyReportDB.generator <- function(
   taxon_db_path = tempfile(pattern="taxondb", fileext=".db"),
   coverage_threshold = 0.5,
   bitscore_tolerance = 0.98,
+  min_match = 50, 
   ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
   log = NULL
 ) {
@@ -78,6 +79,7 @@ generate.TaxonomyReport <- function(blast_db_path,
                                     chunksize = 1000,
                                     coverage_threshold = 0.5,
                                     bitscore_tolerance = 0.98,
+                                    min_match = 50,
                                     ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
                                     ...) {
   log <- list(...)$log
