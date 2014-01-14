@@ -2,7 +2,7 @@
 ##' @keywords internal
 .fetch_hits <- function(blast_db, id, idx = NULL, what = "*", ...) {
   range <- paste0(id, collapse = ",")
-  res <- db_query(blast_db , paste("select", what, "from hit where query_id in (", range, ")"), ...)
+  res <- blastr::db_query(blast_db , paste("select", what, "from hit where query_id in (", range, ")"), ...)
   sres <- split.data.frame(res, as.factor(res$query_id))
   if (!is.null(idx)) {
     assert_that(length(sres) == length(idx))
@@ -19,9 +19,24 @@
     qid <- unique(h$query_id)
     hid <- paste0(h$hit_id, collapse = ",")
     stmt <- paste0("select query_id, hit_id, bit_score from hsp where query_id = ", qid, " AND hit_id in (", hid, ") ")
-    hsps <- db_query(blast_db, stmt, ...)
+    hsps <- blastr::db_query(blast_db, stmt, ...)
     # get all hsps for which bit_score >= tolerance threshold
     hsps <- hsps[hsps$bit_score >= max(hsps$bit_score)*bitscore_tolerance, ]
+    # make sure they are sorted by bit_score
+    hsps <- arrange(hsps, desc(hsps$bit_score))
+    # remove duplicates
+    hsps[!duplicated(hsps$hit_id), ]
+  })
+}
+
+.filter_best_hsps <- function(blast_db, hits) {
+  lapply(hits, function(h) {
+    qid <- unique(h$query_id)
+    hid <- paste0(h$hit_id, collapse = ",")
+    stmt <- paste0("SELECT query_id, hit_id, bit_score FROM hsp WHERE query_id = ", qid, 
+                   " AND bit_score = (SELECT MAX(bit_score) FROM hsp WHERE query_id = ",qid,")")
+    
+    hsps <- blastr::db_query(blast_db, stmt)
     # make sure they are sorted by bit_score
     hsps <- arrange(hsps, desc(hsps$bit_score))
     # remove duplicates
@@ -37,6 +52,16 @@
   hits <- hits[hits$hit_id %in% hsps$hit_id, ]
   row.names(hits) <- NULL
   unname(split.data.frame(hits, as.factor(hits$query_id)))
+}
+
+.assignBestTaxa <- function(blast_db, query_id,
+                            ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom")) {
+  message(" -- Filtering by best hit")
+  hits <- .fetch_hits(conn(blast_db), id = query_id)
+  hsps <- .filter_best_hsps(conn(blast_db), hits) 
+  hits <- .compact_hits(hits, hsps)
+  message(" -- Searching for taxonomy of best hit")
+  
 }
 
 ##' @keywords internal
