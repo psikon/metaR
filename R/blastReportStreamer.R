@@ -81,10 +81,12 @@ blastReportStream.generator <- function(blastdb, chunksize = 100, log = NULL, ve
 }
 
 
-fastqStream.generator <- function(fastq, chunksize = 100, ...) {
-  streamer <- FastqStreamer(con = fastq, n = chunksize, ...)
+#' @importFrom ShortRead FastqStreamer yield
+fastqStream.generator <- function(fastq, chunksize=1000, ...) {
+  assert_that(is.fastq(fastq))
+  streamer <- FastqStreamer(con=fastq, n=chunksize, ...)
   function() {
-    res <- yield(streamer)
+    res <- ShortRead::yield(streamer)
     if (length(res) > 0) res else NULL
   }
 }

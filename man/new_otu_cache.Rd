@@ -1,6 +1,6 @@
 \name{new_otu_cache}
 \alias{new_otu_cache}
-\title{provide a cache containing all parsed otu(s) furing biom format generation}
+\title{provide a cache containing all parsed otu(s) during biom format generation}
 \usage{
 new_otu_cache()
 }

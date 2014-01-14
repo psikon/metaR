@@ -15,11 +15,13 @@ Depends:
     blastr
 Imports:
     assertthat,
+    biom,
     HTSeqGenie,
     IRanges,
     iterators,
     ncbi,
     plyr,
+    Rsamtools,
     RSQLite,
     ShortRead,
     methods

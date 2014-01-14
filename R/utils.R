@@ -1,6 +1,6 @@
 #' @include all-generics.R
 #' @importFrom plyr arrange desc
-#' @importFrom assertthat "on_failure<-"
+#' @importFrom assertthat "on_failure<-" is.string
 NULL
 
 is.empty <- function(x) {
@@ -42,12 +42,23 @@ trim <- function(x, trim = '\\s+') {
   gsub(paste0("^", trim, "|", trim, "$"), '', x)
 }
 
-#' Number of unique elements in a vector.
-#' 
-#' A wrapper around \code{length(unique(x))}
-#' 
-#' @param x vector
-#' @param ... passed to \code{\link{unique}}
+Call <- function(fn, ...) {
+  fn <- match.fun(fn)
+  fn(...)
+}
+
+#' @keywords internal
+Compose <- function(...) {
+  fns <- lapply(compact(list(...)), match.fun)
+  len <- length(fns)
+  function(...) {
+    res <- Call(fns[[len]], ...)
+    for (fn in rev(fns[-len]))
+      res <- fn(res)
+    res
+  }
+}
+
 #' @keywords internal
 nunique <- function(x, ...) {
   if (is.factor(x)) {
@@ -56,6 +67,141 @@ nunique <- function(x, ...) {
     length(unique(x, ...))
   }
 }
+
+#' @keywords internal
+strip_ext <- function (file, sep="\\.", level=0) {
+  assert_that(!missing(file), is.character(file))
+  if (level == 0L) {
+    # level 0 ditches everything that comes after a dot
+    vapply(file, function(x) usplit(x, sep)[1L], "", USE.NAMES = FALSE)
+  } else if (level > 0L) {
+    # level 1 removes the very last extension: file.xyz.abc > file.xyz
+    # level 2: file.xyz.abc > file
+    # and so on
+    count <- count_re(file, sep) + 1L - level
+    # to always grab at least the first element after the split
+    # reset zero counts to 1
+    count <- ifelse(count < 1, 1, count)
+    unlist(Map(function(x, lvl) {
+      paste0(usplit(x, sep)[seq_len(lvl)], collapse=gsub('\\', '', sep, fixed=TRUE))
+    }, x=file, lvl=count, USE.NAMES=FALSE))
+  } else {
+    stop(sprintf("Level %s is invalid. Must be 0, 1, 2, ...", sQuote(level)))
+  }
+}
+
+#' @keywords internal
+replace_ext <- function(file, replacement="", sep="\\.", level=0) {
+  if (nchar(replacement) == 0L)
+    sep=""
+  # strip a leading "." from replacement
+  if (grepl("^\\.", replacement)) {
+    replacement <- usplit(replacement, split="^\\.")[2L]
+  }
+  paste(strip_ext(file=file, sep=sep, level=level), replacement,
+        sep=gsub("\\", "", sep, fixed=TRUE))  
+}
+
+#' @keywords internal
+count_re <- function(x, re, ...) {
+  vapply(gregexpr(re, x, ...), function(x) sum(x > 0L), 0, USE.NAMES=FALSE)
+}
+
+usplit <- Compose("unlist", "strsplit")
+
+
+is.fastq <- function(x) {
+  fq <- readLines(x, n=4)
+  if (!grepl("^@", fq[1]) || !grepl("^\\+", fq[3])) FALSE else TRUE
+}
+on_failure(is.fastq) <- function(call, env) {
+  paste0(deparse(call$x), " is not a FASTQ file.")
+}
+
+merge_list <- function(x, y) {
+  if (length(x) == 0) return(y)
+  if (length(y) == 0) return(x) 
+  i <- is.na(match(names(y), names(x)))
+  if (any(i)) {
+    x[names(y)[which(i)]] <- y[which(i)]
+  }
+  x
+}
+
+are_null <- function (x) {
+  vapply(x, is.null, FALSE, USE.NAMES=FALSE)
+}
+
+are_true <- function (x) {
+  vapply(x, isTRUE, FALSE, USE.NAMES=FALSE)
+}
+
+are_false <- function(x) {
+  vapply(x, function(x) identical(x, FALSE), FALSE, USE.NAMES=FALSE)
+}
+
+#' Test if an external executable is available
+#' 
+#' Uses \code{\link{Sys.which}} internally, so it should work
+#' on Windows and Unix.alikes.
+#' 
+#' @param cmd The exececutable to test for.
+#' @param msg Additional message if the test fails.
+#' @keywords internal
+has_command <- function(cmd, msg = "") {
+  assert_that(is.string(cmd))
+  unname(Sys.which(cmd) != "")
+}
+on_failure(has_command) <- function(call, env) {
+  paste0("Dependency ", sQuote(eval(call$cmd, env)), " is not installed\n",
+         eval(call$msg, env))
+}
+
+#' Wrapper for system commands
+#' 
+#' @param exec The system command to be invoked.
+#' @param ... Arguments passed on to the \code{system} command as name-value or 
+#' name=\code{TRUE} pairs.
+#' @param args Named list of arguments passed on to the \code{system} command.
+#' Is merged with \code{...}.
+#' @param stdin Input.
+#' @param stdout Output.
+#' @param redirection Redirection.
+#' @param style One of \sQuote{unix} or \sQuote{gnu}.
+#' @param sep Seperator of option and option argument.
+#' @param show_cmd Have a look what the final command looks like.
+#' @param intern Passed on to \code{\link{system}}'s \code{intern} argument.
+#' @param input Passed on to \code{\link{system}}'s \code{input} argument.
+#' @keywords internal
+SysCall <- function(exec, ..., args = list(), stdin = NULL, stdout = NULL,
+                    redirection = TRUE, style = c("unix", "gnu"), sep = " ",
+                    show_cmd = FALSE, intern = FALSE, input = NULL) {  
+  assert_that(has_command(exec))
+  args <- merge_list(list(...), args)
+  style <- match.arg(style)
+  if (is.null(stdin)) {
+    stdin <- ""
+  } else if (!is.null(stdin) && redirection) {
+    stdin <- paste("<", stdin)
+  }
+  if (is.null(stdout)) {
+    stdout <- ""
+  } else {
+    stdout <- paste(">", stdout)
+  }
+  args[are_true(args)] <- ""
+  args[are_false(args) | are_null(args)] <- NULL
+  args <- switch(style,
+                 unix=paste0(trim(sprintf("-%s%s%s", names(args), sep, args)), collapse=" "),
+                 gnu=paste0(trim(sprintf("--%s%s%s", names(args), sep, args)), collapse=" "))
+  
+  if (show_cmd) {
+    print(trim(paste(exec, args, stdin, stdout)))
+  } else{
+    system(trim(paste(exec, args, stdin, stdout)), intern = intern, input = input)
+  }
+}
+
 
 setMethod("has_ranks", "Taxon", function(x, ranks) {
   any(getRank(getLineage(x)) %in% ranks)

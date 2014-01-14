@@ -1,4 +1,4 @@
-#' @importFrom ncbi taxonByGeneID getByRank .ncbi_taxon_ranks
+#' @importFrom ncbi taxonByGeneID getTaxID getByRank .ncbi_taxon_ranks
 #' @importFrom iterators iter nextElem
 #' @importFrom assertthat '%has_name%'
 NULL

@@ -9,7 +9,8 @@
 \title{taxonomyReportDB-class}
 \usage{
 generate.BlastReport(fastq, chunksize = 1000, db = "16SMicrobial",
-  max_hits = 25, evalue = 1e-06, perc_identity = 90, n.threads = NULL)
+  max_hits = 25, evalue = 1e-06, perc_identity = 90,
+  num_blast_threads = NULL, num_parallel_jobs = NULL)
 
 generate.TaxonomyReport(blast_db_path, metadata, taxon_db_path,
   chunksize = 1000, coverage_threshold = 0.5, bitscore_tolerance = 0.98,

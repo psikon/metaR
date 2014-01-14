@@ -1,4 +1,4 @@
-#' provide a cache containing all parsed otu(s) furing biom format generation
+#' provide a cache containing all parsed otu(s) during biom format generation
 #' 
 #' @description to avoid redundancy and improve the performance in biom format generation
 #' @keywords internal
