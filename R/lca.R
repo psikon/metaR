@@ -146,7 +146,10 @@ LCA.apply <- function(hits, ranks, log=log) {
     }
   }
   
-  rBind(compact(lapply(hits, .lca)))
+  tryCatch(rBind(compact(lapply(hits, .lca))), error = function(e) {
+    warning("Probably empty sample")
+    data.frame(list(query_id=NA, hit_id=NA, tax_id=NA, scientific_name=NA, rank=NA))[-1,]
+  }
 } 
 
 
