@@ -1,6 +1,7 @@
 #' @include all-generics.R
 #' @importFrom plyr arrange desc
 #' @importFrom assertthat "on_failure<-" is.string
+#' @useDynLib metaR
 NULL
 
 is.empty <- function(x) {
@@ -66,6 +67,15 @@ nunique <- function(x, ...) {
   } else {
     length(unique(x, ...))
   }
+}
+
+#' @keywords internal
+bindList <- function(L) {
+  n_col <- length(L[[1L]])
+  col_classes <- vapply(L[[1L]], class, "", USE.NAMES=FALSE)
+  res <- bind_list(L, n_col, col_classes)
+  attr(res, "row.names")  <- seq_len(length(res[[1L]]))
+  res
 }
 
 #' @keywords internal
@@ -291,5 +301,19 @@ setAs("TaxonList", "data.frame", function (from) {
   }
 }
 
+dots <- function(...) {
+  eval(substitute(alist(...)))
+}
 
+pkg_checker <- function(pkg) {
+  assert_that(is.string(pkg))
+  function()
+    if (!require(eval(substitute(pkg)), character.only=TRUE)) {
+      stop("Please install the ", pkg, " package", call. = FALSE)
+    }
+}
+
+check_parallel <- pkg_checker("parallel")
+
+check_HTSeqGenie <- pkg_checker("HTSeqGenie")
 

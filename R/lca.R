@@ -146,7 +146,7 @@ LCA.apply <- function(hits, ranks, log=log) {
     }
   }
   
-  rBind(compact(lapply(hits, .lca)))
+  bindList(compact(lapply(hits, .lca)))
 } 
 
 

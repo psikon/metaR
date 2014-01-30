@@ -42,7 +42,7 @@
 \alias{getTaxID,taxonomyReportDB-method}
 \alias{getTaxon}
 \alias{getTaxon,taxonomyReportDB-method}
-\title{Getter for taxonomyReportDB}
+\title{Access fields of a taxonomyReportDB object.}
 \usage{
 getTaxon(x, ...)
 
@@ -129,7 +129,7 @@ getDefinition(x, ...)
 \S4method{getMatch}{taxonomyReportDB}(x, id, type)
 }
 \arguments{
-  \item{x}{a \code{taxonomyReportDB} object.}
+  \item{x}{a \code{\linkS4class{taxonomyReportDB}} object.}
 
   \item{id}{an identifier}
 
@@ -139,6 +139,6 @@ getDefinition(x, ...)
   \item{...}{Further arguments passed on to methods.}
 }
 \description{
-Getter for taxonomyReportDB
+Access fields of a taxonomyReportDB object.
 }
 

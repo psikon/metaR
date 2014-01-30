@@ -3,7 +3,7 @@
 \alias{Access metadata}
 \alias{metadata}
 \alias{metadata,taxonomyReportDB-method}
-\alias{metadata<-,taxonomyReportDB-method}
+\alias{metadata<-}
 \title{Access metadata}
 \usage{
 metadata(x, ...)

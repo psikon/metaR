@@ -1,14 +1,20 @@
 \docType{methods}
-\name{getQueryDef,metaCVReport-method}
+\name{getKeggID}
+\alias{getCogID}
 \alias{getCogID,metaCVReport-method}
 \alias{getGeneID,metaCVReport-method}
+\alias{getKeggID}
 \alias{getKeggID,metaCVReport-method}
 \alias{getQueryDef,metaCVReport-method}
 \alias{getScientificName,metaCVReport-method}
 \alias{getScore,metaCVReport-method}
 \alias{getTaxID,metaCVReport-method}
-\title{Getter for metaCVReport}
+\title{Access fields of a metaCVReport object.}
 \usage{
+getKeggID(x, ...)
+
+getCogID(x, ...)
+
 \S4method{getQueryDef}{metaCVReport}(x, id)
 
 \S4method{getScore}{metaCVReport}(x, id)
@@ -24,14 +30,11 @@
 \S4method{getScientificName}{metaCVReport}(x, id)
 }
 \arguments{
-  \item{metaCVReport}{a \code{metaCVReport} object}
+  \item{x}{a \code{\linkS4class{metaCVReport}} object.}
 
-  \item{id}{tax_id}
-
-  \item{x}{A \linkS4class{blastReport} or
-  \linkS4class{IterationList} object.}
+  \item{...}{}
 }
 \description{
-Getter for metaCVReport
+Access fields of a metaCVReport object.
 }
 

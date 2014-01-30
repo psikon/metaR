@@ -12,11 +12,12 @@ Description: metaR provided functions to assign taxonomic classifications
 License: MIT
 Depends:
     R (>= 2.15),
-    blastr
+    blastr,
+    Rcpp (>= 0.10.3)
+LinkingTo: Rcpp
 Imports:
     assertthat,
     biom,
-    HTSeqGenie,
     IRanges,
     iterators,
     ncbi,
@@ -25,7 +26,11 @@ Imports:
     RSQLite,
     ShortRead,
     methods
+Suggests:
+    HTSeqGenie,
+    parallel
 Collate:
+    'RcppExports.R'
     'all-generics.R'
     'assignTaxon.R'
     'otu-cache.R'

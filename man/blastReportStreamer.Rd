@@ -1,3 +1,4 @@
+\docType{methods}
 \name{yield}
 \alias{blastReportStreamer}
 \alias{yield}

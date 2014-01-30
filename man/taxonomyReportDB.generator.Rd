@@ -15,6 +15,8 @@ bitscore_tolerance = 0.98, ranks = c("species", "genus", "family", "order",
 
   \item{ranks}{}
 
+  \item{compact_queries}{}
+
   \item{log}{}
 }
 \value{

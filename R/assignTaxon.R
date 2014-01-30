@@ -105,9 +105,9 @@ assignTaxa <- function(blast_db, coverage_threshold = 0.5, bitscore_tolerance = 
                         ...) {
   assert_that(coverage_threshold >= 0, coverage_threshold <= 1)
   assert_that(bitscore_tolerance > 0, bitscore_tolerance <= 1)
-  dots <- list(...)
-  log <- dots$log
-  .unique <- dots$.unique %||% TRUE
+  dot_args <- dots(...)
+  log <- dot_args$log
+  .unique <- dot_args$.unique %||% TRUE
   if (is.null(query_id)) {
     query_id <- getQueryID(blast_db, log = log)
   }
