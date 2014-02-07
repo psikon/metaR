@@ -34,7 +34,8 @@ compareMetaCVwithBlast <- function(taxonomyReportDB, metaCVReport) {
 }
 
 
-
+#' @export
+#' @rdname countTaxa-methods
 setMethod('countTaxa', 'metaCVReport', function(x, id = NULL) {
   if (is.null(id)) {
     df <- ddply(metaCVReport, .(tax_id), summarise, count = length(tax_id))

@@ -1,8 +1,15 @@
+\docType{methods}
 \name{countTaxa}
 \alias{countTaxa}
+\alias{countTaxa,metaCVReport-method}
+\alias{countTaxa,taxonomyReportDB-method}
 \title{Count the occurences of \code{tax_id}s}
 \usage{
 countTaxa(x, ...)
+
+\S4method{countTaxa}{metaCVReport}(x, id = NULL)
+
+\S4method{countTaxa}{taxonomyReportDB}(x, id = NULL)
 }
 \arguments{
   \item{metaCVReport}{a \code{metaCVReport} object}

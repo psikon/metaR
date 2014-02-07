@@ -69,8 +69,7 @@ NULL
 #'      
 #' @name taxonomyReportDB-class
 #' @rdname taxonomyReportDB-class
-#' @exportClass taxonomyReportDB
-NULL
+#' @export
 .taxonomyReportDB <- setRefClass(
   Class='taxonomyReportDB',
   fields=list(.metadata = 'list'),
@@ -103,7 +102,7 @@ setValidity('taxonomyReportDB', function(object) {
 }) 
 
 
-#' @aliases show,taxonomyReportDB-method
+#' @export
 #' @rdname taxonomyReportDB-class
 setMethod('show', 'taxonomyReportDB',
           function(object) {
@@ -124,7 +123,7 @@ setMethod('show', 'taxonomyReportDB',
 #' @export
 #' @docType methods
 setGeneric("metadata", function(x, ...) standardGeneric("metadata"))
-#' @aliases metadata,taxonomyReportDB-method
+#' @export
 #' @rdname metadata-methods
 setMethod("metadata", "taxonomyReportDB", function(x) x$.metadata)
 
@@ -134,8 +133,8 @@ setMethod("metadata", "taxonomyReportDB", function(x) x$.metadata)
 #' @docType methods
 setGeneric("metadata<-", function(x, value, ...) standardGeneric("metadata<-"))
 
-#' @name Access metadata
-#' @aliases metadata<-,taxonomyReportDB-method
+#' @name metadata<-
+#' @export
 #' @rdname metadata-methods
 setReplaceMethod("metadata", "taxonomyReportDB", function(x, value) {
   x$.metadata <- value

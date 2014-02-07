@@ -7,6 +7,7 @@
 #' @param coverage_threshold
 #' @param bitscore_tolerance
 #' @param ranks
+#' @param compact_queries
 #' @param log
 #' @return A function that can be passed to \code{processChunks}.
 #' @keywords internal
@@ -17,6 +18,7 @@ taxonomyReportDB.generator <- function(
   bitscore_tolerance = 0.98,
   min_match = 50, 
   ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
+  compact_queries = TRUE,
   log = NULL
 ) {
   assert_that(coverage_threshold > 0, coverage_threshold <= 1)
@@ -51,9 +53,14 @@ taxonomyReportDB.generator <- function(
     db_bulk_insert(txndb, 'hit', hitdf, log=log)
     
     blastr:::do_log(log, "Updating query table\n\n")
-    querydf <- db_query(blstdb, paste0('select distinct query_id, query_def, query_len from query ',
-                                       'where query_id in (select query_id from hit where hit_id in (',
-                                       hit_range, '))'), log=log)
+    if (compact_queries) {
+      stmt <- paste0('select distinct query_id, query_def, query_len from query ',
+                     'where query_id in (select query_id from hit where hit_id in (',
+                     hit_range, '))')
+    } else {
+      stmt <- 'select distinct query_id, query_def, query_len from query'
+    }
+    querydf <- db_query(blstdb, stmt, log=log)
     db_bulk_insert(txndb, 'query', querydf, log=log)
     
     blastr:::do_log(log, "Updating hsp table\n\n")
@@ -82,16 +89,20 @@ generate.TaxonomyReport <- function(blast_db_path,
                                     min_match = 50,
                                     ranks = c("species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom"),
                                     ...) {
-  log <- list(...)$log
-  verbose <- list(...)$verbose %||% TRUE
+  dots <- list(...)
+  log <- dots$log
+  verbose <- dots$verbose %||% TRUE
+  compact_queries <- dots$compact_queries %||% TRUE
   blstdb <- blastReportDBConnect(db_path=blast_db_path)
   streamer <- blastReportStream.generator(blstdb, chunksize, log=log)
   assigner <- taxonomyReportDB.generator(metadata,
                                          taxon_db_path, 
                                          coverage_threshold, 
                                          bitscore_tolerance, 
-                                         ranks, log = log)
-  processChunks(streamer, assigner, nb.parallel.jobs=1)
+                                         ranks,
+                                         compact_queries = compact_queries,
+                                         log = log)
+  processChunks(streamer$yield, assigner, nb.parallel.jobs=1)
   txndb <- taxonomyReportDBConnect(taxon_db_path, metadata)
   txndb
 }

@@ -1,4 +1,4 @@
-\docType{methods}
+\docType{class}
 \name{generate.BlastReport}
 \alias{generate.BlastReport}
 \alias{generate.TaxonomyReport}

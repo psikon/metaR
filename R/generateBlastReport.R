@@ -63,6 +63,7 @@ generate.BlastReport <- function(fastq,
                                  perc_identity = 90,
                                  num_blast_threads = NULL,
                                  num_parallel_jobs = NULL) {
+  check_parallel()
   max_threads <- detectCores()
   if (max_threads > 1) {
     if (is.null(num_parallel_jobs)) {
@@ -78,13 +79,13 @@ generate.BlastReport <- function(fastq,
   
   ## initialise fastqStream
   streamer <- fastqStream.generator(fastq, chunksize)
-  on.exit(close(get("streamer", environment(streamer))))
-  fastq_path <- path(get("streamer", environment(streamer)))
+  on.exit(streamer$close())
+  fastq_path <- streamer$path()
   db.out <- normalizePath(file.path(dirname(fastq_path), replace_ext(basename(fastq_path), '.blastdb')), mustWork=FALSE)
   
   ## initialise blast handler
   blast_handler <- blastReportDB.generator(db.out=db.out, db=db, max_hits=max_hits, evalue=evalue,
                                            perc_identity=perc_identity, num_threads=num_blast_threads)
-  processChunks(streamer, blast_handler, num_parallel_jobs)
+  processChunks(streamer$yield, blast_handler, num_parallel_jobs)
   blastReportDBConnect(db.out)
 }
