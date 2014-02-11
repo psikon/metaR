@@ -145,9 +145,13 @@ LCA.apply <- function(hits, ranks, log=log) {
       return(cbind(hit[, c('query_id', 'hit_id')], txdf)) 
     }
   }
-
-  bindList(compact(lapply(hits, .lca)))
-
+  res <- compact(lapply(hits, .lca))
+  if (length(res) < 1L) {
+    data.frame(query_id = NA, hit_id = NA, tax_id = NA, 
+               scientific_name = NA, rank = NA)[-1, ]
+  } else {
+    bindList(res)
+  }
 } 
 
 
