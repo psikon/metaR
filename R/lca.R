@@ -44,7 +44,7 @@ LCA <- function(
   ranks <- names(rev(sort(sapply(ranks, match, ncbi_ranks))))
   #determine the toprank
   topRank <- ranks[length(ranks)]
-  
+  print(hits$gene_id)
   # get the first taxon object
   taxa <- taxonByGeneID(hits$gene_id, log = log)
   
@@ -145,11 +145,6 @@ LCA.apply <- function(hits, ranks, log=log) {
       return(cbind(hit[, c('query_id', 'hit_id')], txdf)) 
     }
   }
-  
-  tryCatch(rBind(compact(lapply(hits, .lca))), error = function(e) {
-    warning("Probably empty sample")
-    data.frame(list(query_id=NA, hit_id=NA, tax_id=NA, scientific_name=NA, rank=NA))[-1,]
-  })
 
   bindList(compact(lapply(hits, .lca)))
 

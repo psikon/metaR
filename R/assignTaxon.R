@@ -55,14 +55,19 @@
   if (coverage_threshold > 0) {
     message(" -- Filtering by query coverage")
     cvg <- compactEmpty(getQueryCoverage(blast_db, id = query_id, log = log))
-    msc <- compactEmpty(lapply(query_id, function(qid) {
-      stmts <- paste0("select max(score) from hsp where query_id = ", qid, " group by hit_id")
-      db_query(blast_db,stmts,1)
-    }))
-    #cvg_idx <- lapply(cvg, function(cvg) which(cvg >= coverage_threshold)) 
-    cvg_idx <- mapply(function(cvg, msc) {
-      which(cvg >= coverage_threshold | msc >= min_score ) }, cvg, msc)
+    cvg_idx <- lapply(cvg, function(cvg) which(cvg >= coverage_threshold))
   }
+#   if (coverage_threshold > 0) {
+#     message(" -- Filtering by query coverage")
+#     cvg <- compactEmpty(getQueryCoverage(blast_db, id = query_id, log = log))
+#     msc <- compactEmpty(lapply(query_id, function(qid) {
+#       stmts <- paste0("select max(score) from hsp where query_id = ", qid, " group by hit_id")
+#       db_query(blast_db,stmts,1)
+#     }))
+#     #cvg_idx <- lapply(cvg, function(cvg) which(cvg >= coverage_threshold)) 
+#     cvg_idx <- mapply(function(cvg, msc) {
+#       which(cvg >= coverage_threshold | msc >= min_score ) }, cvg, msc)
+#   }
   hits <- .fetch_hits(blast_db, id = query_id, idx = cvg_idx, 
                       "query_id, hit_id, gene_id", log = log)
   # filter hsps basing on tolerance threshold
