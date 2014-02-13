@@ -111,6 +111,7 @@ LCA.apply <- function(hits, ranks, log=log) {
     if (nunique(txid <- compactNA(getByRank(txl, topRank, 'TaxId')) > 1 || all(is.na(txid)))) {
       return(NULL)
     }
+    txl <- compactNA(txl)
     # create an iterator for the ranks and retrieve initial taxIds for the first rank
     iranks <- iter(ranks)
     taxids <- getByRank(txl, nextElem(iranks), 'TaxId')
