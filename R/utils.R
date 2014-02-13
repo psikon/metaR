@@ -325,3 +325,11 @@ check_parallel <- pkg_checker("parallel")
 
 check_HTSeqGenie <- pkg_checker("HTSeqGenie")
 
+#' Filter NA entries from a list.
+#'
+#' @param x A vector.
+#' @export
+compactNA <- function(x) {
+  filterNA <- function(x) suppressWarnings(is.na(x)) %||% FALSE
+  x[!vapply(x, filterNA, FALSE, USE.NAMES=FALSE)]
+}

@@ -108,7 +108,7 @@ LCA.apply <- function(hits, ranks, log=log) {
     txl <- taxonByGeneID(hit$gene_id, log=log)
     # If all taxa have non-unique TaxIds at the superkingdom 
     # level discard this query number and move on
-    if (nunique(txid <- getByRank(txl, topRank, 'TaxId')) > 1 || all(is.na(txid))) {
+    if (nunique(txid <- compactNA(getByRank(txl, topRank, 'TaxId')) > 1 || all(is.na(txid)))) {
       return(NULL)
     }
     # create an iterator for the ranks and retrieve initial taxIds for the first rank
