@@ -135,13 +135,16 @@ LCA.apply <- function(hits, ranks, log=log) {
         txl <- txl[valid]
       }
       # get the linage and unique TaxId(s)
+      iranks <- iter(ranks)
       lineage <- getLineage(txl)
       taxids <- unique(getTaxID(txl))
       # traverse through the ranks until all TaxId(s) are unique
       while (length(taxids) > 1 || all(is.na(taxids))) {
         taxids <- unique(getByRank(lineage, nextElem(iranks), 'TaxId'))
+        if ("2" %in% compactNA(taxids)) break
       }
       # jump out
+      taxids <- compactNA(taxids)
       txdf <- as(taxonDB(taxids, full=FALSE, log=log), 'data.frame')
       return(cbind(hit[, c('query_id', 'hit_id')], txdf)) 
     }
